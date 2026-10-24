@@ -1168,3 +1168,15 @@ body.navigation-mode .maplibregl-top {
         top: 75px;
     }
 }
+/* ========================================
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+   BSUN SAT-NAV v0.7
+   MAPLIBRE NAVIGATION CONTROL POSITION
+======================================== */
+
+body.navigation-mode .maplibregl-top.maplibregl-right {
+    top: auto !important;
+    bottom: 95px !important;
+    right: 10px !important;
+}
