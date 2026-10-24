@@ -671,14 +671,14 @@ function updateMapLocation(latitude, longitude, accuracy) {
             zoom: 17,
             pitch: 55,
             duration: 500,
-            padding: {
-                top: 0,
-                bottom: Math.round(
-                    map.getContainer().clientHeight * 0.40
-                ),
-                left: 0,
-                right: 0
-            }
+           padding: {
+    top: Math.round(
+        map.getContainer().clientHeight * 0.35
+    ),
+    bottom: 0,
+    left: 0,
+    right: 0
+}
         };
 
         // Rotate map to vehicle heading when available.
