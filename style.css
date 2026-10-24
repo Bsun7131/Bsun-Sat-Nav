@@ -1028,3 +1028,143 @@ body.navigation-mode .leaflet-top.leaflet-left {
         top: 8px;
     }
 }
+/* ========================================
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+   BSUN SAT-NAV v0.7
+   SEPARATE NAVIGATION DASHBOARD
+======================================== */
+
+/* Allow navigation controls to become independent overlays */
+body.navigation-mode .panel:has(.navigation-controls) {
+    display: contents;
+}
+
+/* Compact turn instructions at the top-left */
+body.navigation-mode .navigation-display {
+    position: fixed;
+
+    top: 10px;
+    left: 10px;
+
+    width: 280px;
+    max-width: calc(100vw - 20px);
+
+    z-index: 120;
+
+    padding: 12px;
+
+    background: rgba(6, 17, 43, 0.92);
+    border: 1px solid #334155;
+    border-radius: 12px;
+
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Remove unnecessary heading and status */
+body.navigation-mode .navigation-display h3,
+body.navigation-mode #navigationStatus {
+    display: none;
+}
+
+/* Next-turn instruction */
+body.navigation-mode #nextTurn {
+    font-size: 17px;
+    line-height: 1.3;
+    margin: 0 0 6px;
+}
+
+/* Step distance */
+body.navigation-mode #remainingDistance {
+    font-size: 12px;
+    margin: 0;
+}
+
+/* Move Stop and Voice buttons to the top-right */
+body.navigation-mode .navigation-controls {
+    position: fixed;
+
+    top: 10px;
+    right: 10px;
+
+    width: auto;
+    max-width: 230px;
+
+    z-index: 120;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    gap: 6px;
+    margin: 0;
+}
+
+/* Compact buttons */
+body.navigation-mode .navigation-controls button {
+    width: auto;
+    flex: 1;
+
+    padding: 9px 10px;
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+/* Keep MapLibre controls accessible */
+body.navigation-mode .maplibregl-top {
+    top: 85px;
+}
+
+/* Portrait mobile layout */
+@media (orientation: portrait) and (max-width: 600px) {
+
+    body.navigation-mode .navigation-display {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+
+        width: auto;
+        max-width: none;
+
+        padding: 10px;
+    }
+
+    body.navigation-mode .navigation-controls {
+        top: auto;
+        bottom: 15px;
+        right: 8px;
+    }
+
+    body.navigation-mode .maplibregl-top {
+        top: 110px;
+    }
+}
+
+/* Landscape mobile layout */
+@media (orientation: landscape) and (max-height: 600px) {
+
+    body.navigation-mode .navigation-display {
+        top: 8px;
+        left: 8px;
+
+        width: 240px;
+        max-width: calc(100vw - 16px);
+
+        padding: 8px;
+    }
+
+    body.navigation-mode #nextTurn {
+        font-size: 14px;
+    }
+
+    body.navigation-mode .navigation-controls {
+        top: 8px;
+        right: 8px;
+        bottom: auto;
+    }
+
+    body.navigation-mode .maplibregl-top {
+        top: 75px;
+    }
+}
