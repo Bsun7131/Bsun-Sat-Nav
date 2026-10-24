@@ -959,3 +959,72 @@ body.navigation-mode .leaflet-top.leaflet-left {
         top: 180px;
     }
 }
+/* ========================================
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+   BSUN SAT-NAV v0.7
+   COMPACT LANDSCAPE NAVIGATION DASHBOARD
+======================================== */
+
+@media (orientation: landscape) and (max-height: 600px) {
+
+    /* Small floating navigation panel */
+    body.navigation-mode .panel:has(.navigation-controls) {
+        top: 8px;
+        left: 8px;
+        right: auto;
+
+        width: 340px;
+        max-width: calc(100vw - 16px);
+
+        padding: 8px;
+        border-radius: 10px;
+    }
+
+    /* Keep buttons on one row */
+    body.navigation-mode .navigation-controls {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 6px;
+        margin: 0 0 4px;
+    }
+
+    body.navigation-mode .navigation-controls button {
+        width: auto;
+        flex: 1;
+        min-width: 0;
+
+        padding: 7px 5px;
+        font-size: 11px;
+    }
+
+    /* Reduce instruction spacing */
+    body.navigation-mode .navigation-display {
+        padding: 2px;
+        margin: 0;
+    }
+
+    /* Hide redundant status */
+    body.navigation-mode #navigationStatus {
+        display: none;
+    }
+
+    /* Smaller turn instruction */
+    body.navigation-mode #nextTurn {
+        font-size: 14px;
+        line-height: 1.25;
+        margin: 4px 0;
+    }
+
+    /* Smaller distance text */
+    body.navigation-mode #remainingDistance {
+        font-size: 11px;
+        margin: 3px 0;
+    }
+
+    /* Keep MapLibre controls away from dashboard */
+    body.navigation-mode .maplibregl-top {
+        top: 8px;
+    }
+}
