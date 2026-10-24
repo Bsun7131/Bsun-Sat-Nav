@@ -161,8 +161,11 @@ if (latestHeading !== null) {
 
         if (vehicleArrow) {
 
-            vehicleArrow.style.transform =
-                `rotate(${coords.heading}deg)`;
+            // Keep the vehicle arrow aligned with the map camera.
+const cameraBearing = map ? map.getBearing() : 0;
+
+vehicleArrow.style.transform =
+    `rotate(${coords.heading - cameraBearing}deg)`;
 
         }
     }
@@ -686,6 +689,31 @@ function updateMapLocation(latitude, longitude, accuracy) {
         map.easeTo(cameraOptions);
     }
 }
+// ========================================
+// BSUN SAT-NAV v0.7
+// MAPLIBRE CENTRE MAP FUNCTION
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
+
+function centreMapOnLocation() {
+
+    if (
+        !map ||
+        !Number.isFinite(latestLatitude) ||
+        !Number.isFinite(latestLongitude)
+    ) {
+        return;
+    }
+
+    map.easeTo({
+        center: [latestLongitude, latestLatitude],
+        zoom: 17,
+        duration: 500
+    });
+
+}
+
 // Connect centre button
 document.getElementById("centreMapBtn")
     .addEventListener("click", centreMapOnLocation);
@@ -826,8 +854,10 @@ async function searchDestination(event) {
         }
 
         const destinationCoordinates = [
-            latitude,
-            longitude
+            
+            longitude,
+            latitude
+            
         ];
 
         // Store the destination for driving route calculation
@@ -841,24 +871,36 @@ clearDisplayedRoute();
 updateRouteButton();
 
         // Remove previous destination marker.
-        if (destinationMarker) {
-            map.removeLayer(destinationMarker);
-        }
+        // ========================================
+// BSUN SAT-NAV v0.7
+// MAPLIBRE DESTINATION MARKER
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
 
-        // Create destination marker.
-        destinationMarker = L.marker(
-            destinationCoordinates
-        ).addTo(map);
+// Remove previous destination marker.
+if (destinationMarker) {
+    destinationMarker.remove();
+}
 
-        destinationMarker.bindPopup(
-            "📍 Destination"
-        ).openPopup();
+// Create MapLibre destination marker.
+destinationMarker = new maplibregl.Marker({
+    color: "#ef4444"
+})
+    .setLngLat(destinationCoordinates)
+    .setPopup(
+        new maplibregl.Popup().setText("📍 Destination")
+    )
+    .addTo(map);
 
-        // Zoom to destination.
-        map.setView(
-            destinationCoordinates,
-            14
-        );
+// Display destination popup.
+destinationMarker.togglePopup();
+
+// Zoom to destination.
+map.flyTo({
+    center: destinationCoordinates,
+    zoom: 14
+});
 
         destinationStatus.textContent =
             "Destination found successfully.";
@@ -992,10 +1034,19 @@ document.getElementById("remainingDistance").textContent =
 
     routeRequestId++;
 
-    if (displayedRoute && map) {
-        map.removeLayer(displayedRoute);
-        displayedRoute = null;
+    // Remove the MapLibre route layer and source.
+if (map) {
+
+    if (map.getLayer("driving-route")) {
+        map.removeLayer("driving-route");
     }
+
+    if (map.getSource("driving-route")) {
+        map.removeSource("driving-route");
+    }
+}
+
+displayedRoute = null;
 
     routeResults.hidden = true;
 
@@ -1120,35 +1171,68 @@ if (Array.isArray(route.legs)) {
         }
 
         // GeoJSON coordinates are longitude,latitude.
-        const routePoints =
-            route.geometry.coordinates.map(
-                coordinate => [
-                    coordinate[1],
-                    coordinate[0]
-                ]
-            );
+        // ========================================
+// BSUN SAT-NAV v0.7
+// MAPLIBRE DRIVING ROUTE
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
 
-        if (displayedRoute) {
-            map.removeLayer(displayedRoute);
-        }
+// OSRM already provides longitude, latitude coordinates.
+const routePoints = route.geometry.coordinates;
 
-        displayedRoute = L.polyline(
-            routePoints,
-            {
-                color: "#2563eb",
-                weight: 6,
-                opacity: 0.9
-            }
-        ).addTo(map);
+// Remove the previous route layer and source.
+if (map.getLayer("driving-route")) {
+    map.removeLayer("driving-route");
+}
 
-        // Fit the whole journey onto the map.
-        map.fitBounds(
-            displayedRoute.getBounds(),
-            {
-                padding: [35, 35]
-            }
-        );
+if (map.getSource("driving-route")) {
+    map.removeSource("driving-route");
+}
 
+// Create the route GeoJSON source.
+map.addSource("driving-route", {
+    type: "geojson",
+    data: {
+        type: "Feature",
+        geometry: {
+            type: "LineString",
+            coordinates: routePoints
+        },
+        properties: {}
+    }
+});
+
+// Display the blue driving route.
+map.addLayer({
+    id: "driving-route",
+    type: "line",
+    source: "driving-route",
+    layout: {
+        "line-join": "round",
+        "line-cap": "round"
+    },
+    paint: {
+        "line-color": "#2563eb",
+        "line-width": 6,
+        "line-opacity": 0.9
+    }
+});
+
+displayedRoute = "driving-route";
+
+// Calculate route boundaries.
+const bounds = new maplibregl.LngLatBounds();
+
+routePoints.forEach(coordinate => {
+    bounds.extend(coordinate);
+});
+
+// Fit the entire route onto the map.
+map.fitBounds(bounds, {
+    padding: 35,
+    duration: 1000
+});
         // Convert metres to miles.
         const miles = route.distance / 1609.344;
 
@@ -1235,9 +1319,13 @@ document.body.classList.add("navigation-mode");
 
 goBtn.disabled = true;
 stopNavigationBtn.disabled = false;
+// ========================================
+// BSUN SAT-NAV v0.7
+// MAPLIBRE PERSPECTIVE NAVIGATION CAMERA
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
 
-// Resize the map and position the vehicle
-// approximately 70% down the screen.
 requestAnimationFrame(() => {
 
     if (
@@ -1248,48 +1336,38 @@ requestAnimationFrame(() => {
         return;
     }
 
-    map.invalidateSize();
+    map.resize();
 
     const vehicleLocation = [
-        latestLatitude,
-        latestLongitude
+        latestLongitude,
+        latestLatitude
     ];
 
-    // Set the navigation zoom level
-    map.setZoom(17, {
-        animate: false
-    });
+    const cameraOptions = {
+        center: vehicleLocation,
+        zoom: 17,
+        pitch: 55,
+        padding: {
+            top: 0,
+            bottom: Math.round(
+                map.getContainer().clientHeight * 0.40
+            ),
+            left: 0,
+            right: 0
+        },
+        duration: 800
+    };
 
-    // Convert vehicle coordinates to map pixels
-    const vehiclePoint = map.project(
-        vehicleLocation,
-        map.getZoom()
-    );
+    if (Number.isFinite(latestHeading)) {
+        cameraOptions.bearing = latestHeading;
+    }
 
-    // Calculate the vertical offset
-    const verticalOffset = map.getSize().y * 0.20;
-
-    // Move the map centre north of the vehicle
-    const adjustedCentrePoint = L.point(
-        vehiclePoint.x,
-        vehiclePoint.y - verticalOffset
-    );
-
-    const adjustedCentre = map.unproject(
-        adjustedCentrePoint,
-        map.getZoom()
-    );
-
-    // Position the vehicle lower on the screen
-    map.setView(
-        adjustedCentre,
-        17,
-        {
-            animate: false
-        }
-    );
+    map.easeTo(cameraOptions);
 
 });
+
+
+
 
     navigationStatus.textContent =
     "Navigation mode started.";
@@ -1354,11 +1432,21 @@ stopNavigationBtn.addEventListener("click", () => {
     navigationStatus.textContent =
         "Navigation stopped.";
 
-    // Refresh Leaflet after restoring the layout
-    requestAnimationFrame(() => {
-        if (map) {
-            map.invalidateSize();
-        }
-    });
+    // Restore the normal MapLibre camera and layout.
+requestAnimationFrame(() => {
+    if (map) {
+        map.resize();
 
+        map.easeTo({
+            pitch: 0,
+            bearing: 0,
+            padding: {
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0
+            },
+            duration: 500
+        });
+    }
 });
