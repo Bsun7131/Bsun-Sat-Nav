@@ -140,10 +140,14 @@ console.log("GPS heading:", coords.heading);
 console.log("GPS speed:", coords.speed);
 
 // Heading
-if (
+// Heading
+latestHeading =
     coords.heading !== null &&
     Number.isFinite(coords.heading)
-) {
+        ? coords.heading
+        : null;
+
+if (latestHeading !== null) {
 
     headingElement.textContent =
         coords.heading.toFixed(0) + "°";
@@ -433,9 +437,9 @@ let accuracyCircle = null;
 
 let latestLatitude = null;
 let latestLongitude = null;
+let latestHeading = null;
 
 let firstLocationReceived = false;
-
 
 // ========================================
 // INITIALISE INTERACTIVE MAP
@@ -443,28 +447,53 @@ let firstLocationReceived = false;
 
 function initialiseMap() {
 
-    if (typeof L === "undefined") {
-        console.error("Leaflet library not loaded.");
-        return;
-    }
-
-    // Initial view of the United Kingdom
-    map = L.map("map").setView([54.5, -3.0], 6);
-
-    // Add OpenStreetMap road map
-    L.tileLayer(
-        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-            attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',
-            maxZoom: 19
-        }
-    ).addTo(map);
+    if (typeof maplibregl === "undefined") {
+    console.error("MapLibre GL JS library not loaded.");
+    return;
 }
+
+   // ========================================
+// MAPLIBRE GL JS - MAP INITIALISATION
+// Copyright (c) 2026 Bisan Subba.
+// ========================================
+
+// Initial view of the United Kingdom
+map = new maplibregl.Map({
+    container: "map",
+
+    // Free vector map tiles from OpenFreeMap
+    style: "https://tiles.openfreemap.org/styles/liberty",
+
+    center: [-3.0, 54.5],
+
+    zoom: 6,
+
+    // Navigation camera settings
+    pitch: 0,
+    bearing: 0,
+
+    attributionControl: true
+});
+
+// Add zoom and rotation controls
+map.addControl(
+    new maplibregl.NavigationControl(),
+    "top-right"
+);
+}   
 
 
 // ========================================
 // DISPLAY GPS POSITION ON MAP
+// ========================================
+
+
+
+// ========================================
+// BSUN SAT-NAV v0.7
+// MAPLIBRE GPS LOCATION & VEHICLE TRACKING
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
 // ========================================
 
 function updateMapLocation(latitude, longitude, accuracy) {
@@ -476,142 +505,187 @@ function updateMapLocation(latitude, longitude, accuracy) {
     latestLatitude = latitude;
     latestLongitude = longitude;
 
-    const location = [latitude, longitude];
+    // MapLibre coordinates: [longitude, latitude]
+    const location = [longitude, latitude];
 
-   // ========================================
-// BSUN SAT-NAV v0.6.1
-// VEHICLE NAVIGATION ARROW
-// ========================================
+    // ========================================
+    // VEHICLE NAVIGATION ARROW
+    // ========================================
 
-if (!locationMarker) {
+    if (!locationMarker) {
 
-    const vehicleIcon = L.divIcon({
-        className: "vehicle-marker",
-        html: `
-    <div class="vehicle-arrow">
-        <svg viewBox="0 0 48 60" width="42" height="52"
-             xmlns="http://www.w3.org/2000/svg"
-             aria-label="Vehicle location">
-            <path
-                d="M24 3 L44 53 L24 42 L4 53 Z"
-                fill="#2563eb"
-                stroke="#ffffff"
-                stroke-width="3"
-                stroke-linejoin="round"
-            />
-        </svg>
-    </div>
-`,
-        iconSize: [42, 52],
-iconAnchor: [21, 26]
-    });
+        const vehicleElement = document.createElement("div");
+        vehicleElement.className = "vehicle-marker";
 
-    locationMarker = L.marker(location, {
-        icon: vehicleIcon
-    }).addTo(map);
+        vehicleElement.innerHTML = `
+            <div class="vehicle-arrow">
+                <svg viewBox="0 0 48 60"
+                     width="42"
+                     height="52"
+                     xmlns="http://www.w3.org/2000/svg"
+                     aria-label="Vehicle location">
+                    <path
+                        d="M24 3 L44 53 L24 42 L4 53 Z"
+                        fill="#2563eb"
+                        stroke="#ffffff"
+                        stroke-width="3"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            </div>
+        `;
 
-    locationMarker.bindPopup("Your approximate location");
-
-} else {
-
-    locationMarker.setLatLng(location);
-
-}
-
-    // GPS accuracy circle
-    if (!accuracyCircle) {
-
-        accuracyCircle = L.circle(location, {
-            radius: accuracy,
-            color: "#3b82f6",
-            weight: 1,
-            fillColor: "#3b82f6",
-            fillOpacity: 0.12
-        }).addTo(map);
+        locationMarker = new maplibregl.Marker({
+            element: vehicleElement,
+            anchor: "center"
+        })
+            .setLngLat(location)
+            .setPopup(
+                new maplibregl.Popup().setText(
+                    "Your approximate location"
+                )
+            )
+            .addTo(map);
 
     } else {
 
-        accuracyCircle.setLatLng(location);
-        accuracyCircle.setRadius(accuracy);
+        locationMarker.setLngLat(location);
+
     }
 
-    // Automatically centre on first GPS reading
     // ========================================
-// BSUN SAT-NAV v0.6.2
-// LIVE GPS MAP FOLLOWING
-// Copyright (c) 2026 Bisan Subba.
-// All rights reserved.
-// ========================================
+    // GPS ACCURACY CIRCLE
+    // ========================================
 
-// Automatically centre on first GPS reading
-if (!firstLocationReceived) {
+    // Create a GeoJSON polygon approximating
+    // the GPS accuracy radius in metres.
 
-    map.setView(location, 16);
-    firstLocationReceived = true;
-}
+    const radius = Math.max(0, Number(accuracy) || 0);
+    const points = [];
+    const earthRadius = 6378137;
+    const latitudeRadians = latitude * Math.PI / 180;
 
-// ========================================
-// BSUN SAT-NAV v0.6.3
-// ROAD-AHEAD MAP POSITIONING
-// Copyright (c) 2026 Bisan Subba.
-// All rights reserved.
-// ========================================
+    for (let i = 0; i <= 64; i++) {
 
-// Follow the vehicle during active navigation
-if (navigationActive && map) {
+        const angle = (i / 64) * Math.PI * 2;
 
-    // Convert GPS coordinates into map pixel coordinates
-    const vehiclePoint = map.project(location, map.getZoom());
+        const deltaLatitude =
+            (radius / earthRadius) *
+            Math.cos(angle) *
+            (180 / Math.PI);
 
-    // Calculate the desired vehicle position
-    const mapHeight = map.getSize().y;
+        const deltaLongitude =
+            (radius / earthRadius) *
+            Math.sin(angle) *
+            (180 / Math.PI) /
+            Math.max(0.000001, Math.cos(latitudeRadians));
 
-    // Position vehicle 70% down the screen
-    const verticalOffset = mapHeight * 0.20;
-
-    // Shift map centre north of vehicle position
-    const adjustedCentrePoint = L.point(
-        vehiclePoint.x,
-        vehiclePoint.y - verticalOffset
-    );
-
-    // Convert adjusted centre back into GPS coordinates
-    const adjustedCentre = map.unproject(
-        adjustedCentrePoint,
-        map.getZoom()
-    );
-
-    // Move map while keeping vehicle lower on screen
-    map.panTo(adjustedCentre, {
-        animate: true,
-        duration: 0.5
-    });
-
-}
-}
-
-// ========================================
-// CENTRE MAP BUTTON
-// ========================================
-
-function centreMapOnLocation() {
-
-    if (
-        !map ||
-        latestLatitude === null ||
-        latestLongitude === null
-    ) {
-        alert("Please start GPS tracking first.");
-        return;
+        points.push([
+            longitude + deltaLongitude,
+            latitude + deltaLatitude
+        ]);
     }
 
-    map.setView(
-        [latestLatitude, latestLongitude],
-        16
-    );
+    const accuracyData = {
+        type: "Feature",
+        geometry: {
+            type: "Polygon",
+            coordinates: [points]
+        },
+        properties: {}
+    };
+
+    // Add or update the accuracy overlay once
+    // the MapLibre style has finished loading.
+
+    if (map.isStyleLoaded()) {
+
+        const existingSource =
+            map.getSource("gps-accuracy");
+
+        if (!existingSource) {
+
+            map.addSource("gps-accuracy", {
+                type: "geojson",
+                data: accuracyData
+            });
+
+            map.addLayer({
+                id: "gps-accuracy-fill",
+                type: "fill",
+                source: "gps-accuracy",
+                paint: {
+                    "fill-color": "#3b82f6",
+                    "fill-opacity": 0.12
+                }
+            });
+
+            map.addLayer({
+                id: "gps-accuracy-outline",
+                type: "line",
+                source: "gps-accuracy",
+                paint: {
+                    "line-color": "#3b82f6",
+                    "line-width": 1
+                }
+            });
+
+        } else {
+
+            existingSource.setData(accuracyData);
+
+        }
+    }
+
+    // ========================================
+    // FIRST GPS READING
+    // ========================================
+
+    if (!firstLocationReceived) {
+
+        map.jumpTo({
+            center: location,
+            zoom: 16
+        });
+
+        firstLocationReceived = true;
+    }
+
+    // ========================================
+    // LIVE GPS FOLLOWING
+    // ROAD-AHEAD CAMERA POSITIONING
+    // ========================================
+
+    if (navigationActive) {
+
+        const heading =
+            Number.isFinite(Number(latestHeading))
+                ? Number(latestHeading)
+                : null;
+
+        const cameraOptions = {
+            center: location,
+            zoom: 17,
+            pitch: 55,
+            duration: 500,
+            padding: {
+                top: 0,
+                bottom: Math.round(
+                    map.getContainer().clientHeight * 0.40
+                ),
+                left: 0,
+                right: 0
+            }
+        };
+
+        // Rotate map to vehicle heading when available.
+        if (heading !== null) {
+            cameraOptions.bearing = heading;
+        }
+
+        map.easeTo(cameraOptions);
+    }
 }
-
-
 // Connect centre button
 document.getElementById("centreMapBtn")
     .addEventListener("click", centreMapOnLocation);
