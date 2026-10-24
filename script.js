@@ -1357,8 +1357,8 @@ requestAnimationFrame(() => {
 
     const cameraOptions = {
         center: vehicleLocation,
-        zoom: 17.5,
-        pitch: 50,
+        zoom: 17,
+        pitch: 55,
         padding: {
             top: 0,
             bottom: Math.round(
