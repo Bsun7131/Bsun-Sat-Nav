@@ -661,9 +661,10 @@ function updateMapLocation(latitude, longitude, accuracy) {
 
     if (navigationActive) {
 
+    const heading =
         Number.isFinite(latestHeading)
-    ? latestHeading
-    : null;
+            ? latestHeading
+            : null;
 
         const cameraOptions = {
             center: location,
