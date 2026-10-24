@@ -1260,15 +1260,31 @@ if (navigationSteps.length > 0) {
 
 });
 
+// ========================================
+// BSUN SAT-NAV — STOP NAVIGATION FIX
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
+
 // STOP NAVIGATION
 stopNavigationBtn.addEventListener("click", () => {
 
     navigationActive = false;
+
+    // Restore the normal application layout
+    document.body.classList.remove("navigation-mode");
 
     goBtn.disabled = !routeReady;
     stopNavigationBtn.disabled = true;
 
     navigationStatus.textContent =
         "Navigation stopped.";
+
+    // Refresh Leaflet after restoring the layout
+    requestAnimationFrame(() => {
+        if (map) {
+            map.invalidateSize();
+        }
+    });
 
 });
