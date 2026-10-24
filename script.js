@@ -661,10 +661,9 @@ function updateMapLocation(latitude, longitude, accuracy) {
 
     if (navigationActive) {
 
-        const heading =
-            Number.isFinite(Number(latestHeading))
-                ? Number(latestHeading)
-                : null;
+        Number.isFinite(latestHeading)
+    ? latestHeading
+    : null;
 
         const cameraOptions = {
             center: location,
@@ -1169,6 +1168,18 @@ if (Array.isArray(route.legs)) {
         ) {
             throw new Error("Invalid route geometry.");
         }
+
+        // Wait for MapLibre's map style to finish loading.
+if (!map.isStyleLoaded()) {
+    await new Promise(resolve => {
+        map.once("load", resolve);
+    });
+}
+
+// Stop if this route request has been cancelled.
+if (requestId !== routeRequestId) {
+    return;
+}
 
         // GeoJSON coordinates are longitude,latitude.
         // ========================================
