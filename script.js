@@ -481,7 +481,7 @@ map = new maplibregl.Map({
 // Add zoom and rotation controls
 map.addControl(
     new maplibregl.NavigationControl(),
-    "top-right"
+    "bottom-left"
 );
 }   
 
