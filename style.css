@@ -1180,3 +1180,7 @@ body.navigation-mode .maplibregl-top.maplibregl-right {
     bottom: 95px !important;
     right: 10px !important;
 }
+
+body.navigation-mode .maplibregl-top.maplibregl-right .maplibregl-ctrl {
+    margin-top: 0 !important;
+}
