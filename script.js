@@ -1462,3 +1462,28 @@ requestAnimationFrame(() => {
     }
 });
 });
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.7
+// MOBILE SCREEN ROTATION FIX
+// ========================================
+
+// Refresh MapLibre after the browser viewport changes.
+let mapResizeTimer = null;
+
+window.addEventListener("resize", () => {
+
+    clearTimeout(mapResizeTimer);
+
+    mapResizeTimer = setTimeout(() => {
+
+        if (!map) {
+            return;
+        }
+
+        map.resize();
+
+    }, 300);
+
+});
