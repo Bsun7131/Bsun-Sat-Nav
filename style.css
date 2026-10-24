@@ -1,0 +1,891 @@
+/*
+Copyright (c) 2026 Bisan Subba.
+All rights reserved.
+Bsun Sat-Nav — Stylesheet
+*/
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #020617,
+            #06112b,
+            #10264d
+        );
+
+    color: #e5e7eb;
+
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+/* HEADER */
+
+.app-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.brand {
+    color: #60a5fa;
+    font-size: 12px;
+    letter-spacing: 3px;
+    font-weight: bold;
+}
+
+h1 {
+    font-size: 38px;
+    margin: 15px 0 10px;
+    color: #ffffff;
+}
+
+.subtitle {
+    color: #cbd5e1;
+    font-size: 16px;
+}
+
+.developer {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+/* PANELS */
+
+.panel {
+    background: rgba(15, 23, 42, 0.85);
+
+    border: 1px solid #334155;
+
+    border-radius: 16px;
+
+    padding: 25px;
+
+    margin-bottom: 20px;
+}
+
+.panel h2 {
+    margin-top: 0;
+    font-size: 21px;
+    color: #f8fafc;
+}
+
+/* STATUS */
+
+.status-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    background: #020617;
+
+    border-radius: 10px;
+
+    margin-bottom: 20px;
+}
+
+.status-label {
+    color: #cbd5e1;
+}
+
+.status {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.status.inactive {
+    color: #f87171;
+}
+
+.status.active {
+    color: #4ade80;
+}
+
+.status.pending {
+    color: #facc15;
+}
+
+/* BUTTONS */
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: background 0.2s;
+}
+
+.primary-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.primary-btn:hover {
+    background: #1d4ed8;
+}
+
+.secondary-btn {
+    background: #334155;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background: #475569;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* INFORMATION GRID */
+
+.info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 15px;
+}
+
+.info-card {
+    background: #020617;
+
+    border: 1px solid #1e293b;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    min-width: 0;
+}
+
+.info-label {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    margin-bottom: 12px;
+}
+
+.info-card strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    overflow-wrap: anywhere;
+}
+
+/* INFORMATION */
+
+.information {
+    line-height: 1.8;
+    color: #cbd5e1;
+}
+
+.warning {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: rgba(245, 158, 11, 0.1);
+
+    border: 1px solid #92400e;
+
+    color: #fcd34d;
+
+    line-height: 1.6;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+
+    margin-top: 30px;
+
+    padding: 20px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 12px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+
+    .info-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .info-card {
+        padding: 15px;
+    }
+
+    .info-card strong {
+        font-size: 17px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 380px) {
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+#map {
+    width: 100%;
+    height: 480px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    background: #07142d;
+    z-index: 1;
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.3
+   DESTINATION SEARCH
+======================================== */
+
+.destination-form {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+#destinationInput {
+    flex: 1;
+    min-width: 220px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #020617;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+#destinationInput:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+.destination-form button {
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.destination-form button:hover {
+    background: #1d4ed8;
+}
+
+.destination-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.search-description,
+#destinationStatus,
+#destinationResult,
+.search-attribution {
+    color: #94a3b8;
+    line-height: 1.6;
+}
+
+#destinationStatus {
+    margin-top: 15px;
+}
+
+#destinationResult {
+    color: #ffffff;
+}
+
+.search-attribution {
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .destination-form {
+        flex-direction: column;
+    }
+
+    .destination-form button {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.4
+   DRIVING ROUTE STYLES
+======================================== */
+
+.route-controls {
+    margin-top: 20px;
+}
+
+#showRouteBtn {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 8px;
+
+    background: #16a34a;
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+#showRouteBtn:hover:not(:disabled) {
+    background: #15803d;
+}
+
+#showRouteBtn:disabled {
+    background: #334155;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.route-information {
+    margin-top: 15px;
+    color: #cbd5e1;
+    line-height: 1.7;
+}
+
+#routeResults {
+    margin-top: 12px;
+    padding: 12px 16px;
+
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 8px;
+}
+
+#routeResults[hidden] {
+    display: none;
+}
+
+#routeDistance,
+#routeDuration {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* ========================================
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+
+   BSUN SAT-NAV v0.5
+   NAVIGATION CONTROLS
+======================================== */
+
+.navigation-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.navigation-controls button {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#goBtn {
+    background: #16a34a;
+    color: white;
+}
+
+#stopNavigationBtn {
+    background: #dc2626;
+    color: white;
+}
+
+#voiceToggleBtn {
+    background: #2563eb;
+    color: white;
+}
+
+.navigation-controls button:disabled {
+    background: #334155;
+    color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.navigation-display {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.navigation-display h3 {
+    color: #ffffff;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+#navigationStatus {
+    color: #93c5fd;
+}
+
+#nextTurn {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+#remainingDistance {
+    color: #cbd5e1;
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.5
+   DEDICATED CAR NAVIGATION MODE
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+======================================== */
+
+/* Navigation mode background */
+body.navigation-mode {
+    background: #06112b;
+}
+
+/* Hide the ordinary application header */
+body.navigation-mode .app-header {
+    display: none;
+}
+
+/* Expand the application container */
+body.navigation-mode .container {
+    max-width: 100%;
+    width: 100%;
+    padding: 12px;
+}
+
+/* Hide planning panels during navigation */
+body.navigation-mode .panel {
+    display: none;
+}
+
+/* Keep the destination/navigation controls visible */
+body.navigation-mode .panel:has(.navigation-controls) {
+    display: block;
+}
+
+/* Keep the interactive map visible */
+body.navigation-mode .panel:has(#map) {
+    display: block;
+}
+
+/* Hide destination search controls */
+body.navigation-mode .destination-form,
+body.navigation-mode .search-description,
+body.navigation-mode #destinationStatus,
+body.navigation-mode #destinationResult,
+body.navigation-mode .route-controls,
+body.navigation-mode .route-information,
+body.navigation-mode .search-attribution {
+    display: none;
+}
+
+/* Hide the destination search heading */
+body.navigation-mode .panel:has(.navigation-controls) > h2 {
+    display: none;
+}
+
+/* Make the navigation dashboard prominent */
+body.navigation-mode .navigation-display {
+    background: #0b1b35;
+    border: 2px solid #2563eb;
+    padding: 22px;
+    border-radius: 14px;
+}
+
+/* Large next-turn instruction */
+body.navigation-mode #nextTurn {
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Highlight navigation status */
+body.navigation-mode #navigationStatus {
+    font-size: 17px;
+    color: #93c5fd;
+}
+
+/* Make the map significantly larger */
+body.navigation-mode #map {
+    height: 65vh;
+    min-height: 450px;
+    border-radius: 14px;
+}
+
+/* Hide ordinary map instructions */
+body.navigation-mode .map-information {
+    display: none;
+}
+
+/* Hide the map centre button */
+body.navigation-mode #centreMapBtn {
+    display: none;
+}
+
+/* Hide footer during navigation */
+body.navigation-mode footer {
+    display: none;
+}
+
+/* Mobile navigation layout */
+@media (max-width: 600px) {
+
+    body.navigation-mode .container {
+        padding: 6px;
+    }
+
+    body.navigation-mode #map {
+        height: 60vh;
+        min-height: 350px;
+    }
+
+    body.navigation-mode .navigation-display {
+        padding: 14px;
+    }
+
+    body.navigation-mode #nextTurn {
+        font-size: 22px;
+    }
+
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.5
+   FULL-SCREEN CAR NAVIGATION LAYOUT
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+======================================== */
+
+/* Use the viewport for navigation */
+body.navigation-mode {
+    overflow: hidden;
+}
+
+/* Main navigation map panel */
+body.navigation-mode .panel:has(#map) {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: #06112b;
+}
+
+/* Map fills the browser viewport */
+body.navigation-mode #map {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    border-radius: 0;
+}
+
+/* Hide the ordinary map heading */
+body.navigation-mode .map-header {
+    display: none;
+}
+
+/* Navigation controls panel overlays the map */
+body.navigation-mode .panel:has(.navigation-controls) {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 110;
+
+    width: auto;
+    max-width: 650px;
+    margin: 0;
+    padding: 16px;
+
+    background: rgba(6, 17, 43, 0.94);
+    border: 1px solid #334155;
+    border-radius: 14px;
+}
+
+/* Compact navigation controls */
+body.navigation-mode .navigation-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 12px;
+}
+
+/* Hide GO while navigation is active */
+body.navigation-mode #goBtn {
+    display: none;
+}
+
+/* Navigation instruction panel */
+body.navigation-mode .navigation-display {
+    padding: 14px;
+    margin: 0;
+    border: none;
+    background: transparent;
+}
+
+/* Smaller heading */
+body.navigation-mode .navigation-display h3 {
+    margin-bottom: 8px;
+}
+
+/* Prominent next-turn instruction */
+body.navigation-mode #nextTurn {
+    font-size: clamp(20px, 2.5vw, 30px);
+    line-height: 1.3;
+}
+
+/* Keep map controls accessible */
+body.navigation-mode .leaflet-top {
+    top: 190px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+
+    body.navigation-mode .panel:has(.navigation-controls) {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        padding: 12px;
+    }
+
+    body.navigation-mode .navigation-controls button {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    body.navigation-mode .leaflet-top {
+        top: 220px;
+    }
+
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.5
+   COMPACT NAVIGATION DASHBOARD
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+======================================== */
+
+/* Smaller floating navigation panel */
+body.navigation-mode .panel:has(.navigation-controls) {
+    top: 12px;
+    left: 12px;
+    right: auto;
+
+    width: 390px;
+    max-width: calc(100vw - 24px);
+
+    padding: 12px;
+
+    background: rgba(6, 17, 43, 0.92);
+    border-radius: 12px;
+}
+
+/* Compact navigation buttons */
+body.navigation-mode .navigation-controls {
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+body.navigation-mode .navigation-controls button {
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+/* Smaller instruction panel */
+body.navigation-mode .navigation-display {
+    padding: 8px;
+}
+
+/* Hide redundant heading */
+body.navigation-mode .navigation-display h3 {
+    display: none;
+}
+
+/* Compact navigation status */
+body.navigation-mode #navigationStatus {
+    font-size: 12px;
+    margin: 4px 0 8px;
+}
+
+/* Clear next-turn instruction */
+body.navigation-mode #nextTurn {
+    font-size: 20px;
+    line-height: 1.35;
+    margin: 8px 0;
+}
+
+/* Compact distance information */
+body.navigation-mode #remainingDistance {
+    font-size: 14px;
+    margin: 6px 0;
+}
+
+/* Keep map zoom controls away from dashboard */
+body.navigation-mode .leaflet-top {
+    top: 175px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+
+    body.navigation-mode .panel:has(.navigation-controls) {
+        top: 8px;
+        left: 8px;
+
+        width: calc(100vw - 16px);
+        max-width: none;
+    }
+
+    body.navigation-mode #nextTurn {
+        font-size: 18px;
+    }
+
+    body.navigation-mode .leaflet-top {
+        top: 185px;
+    }
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.6.1
+   VEHICLE NAVIGATION ARROW
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+======================================== */
+
+.vehicle-marker {
+    background: transparent;
+    border: none;
+}
+
+/* ========================================
+   BSUN SAT-NAV v0.6.1
+   STANDALONE VEHICLE POINTER
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+======================================== */
+
+.vehicle-arrow {
+    width: 36px;
+    height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    color: #2563eb;
+
+    border: none;
+    border-radius: 0;
+
+    font-size: 38px;
+    font-weight: bold;
+    line-height: 1;
+
+    -webkit-text-stroke: 2px white;
+
+    filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.5));
+}
+
+/* ========================================
+   BSUN SAT-NAV — NAVIGATION ZOOM CONTROLS
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+======================================== */
+
+body.navigation-mode .leaflet-top.leaflet-left {
+    top: auto !important;
+    bottom: 20px !important;
+    left: auto !important;
+    right: 12px !important;
+}

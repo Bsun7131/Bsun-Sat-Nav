@@ -1,0 +1,395 @@
+<!--
+Copyright (c) 2026 Bisan Subba.
+All rights reserved.
+Bsun Sat-Nav — Live GPS Tracking
+-->
+
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#06112b">
+
+    <meta name="description"
+          content="Bsun Sat-Nav — A browser-based GPS tracking application developed by Bisan Subba.">
+
+    <title>Bsun Sat-Nav | Live GPS Tracking</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Leaflet Interactive Mapping Library -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
+    
+
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="icon"
+          type="image/png"
+          href="icons/icon-192.png">
+
+    <!-- Leaflet JavaScript Library -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    defer>
+</script>
+
+<!-- Bsun Sat-Nav JavaScript -->
+<script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <header class="app-header">
+
+            <div class="brand">
+                BSUN • NAVIGATION UTILITIES
+            </div>
+
+            <h1>Bsun Sat-Nav</h1>
+
+            <p class="subtitle">
+                Live GPS tracking and location information
+            </p>
+
+            <p class="developer">
+                Developer: Bisan Subba
+            </p>
+
+        </header>
+
+        <section class="panel">
+
+            <h2>GPS Tracking</h2>
+
+            <div class="status-box">
+
+                <span class="status-label">
+                    GPS Status
+                </span>
+
+                <span id="gpsStatus"
+                      class="status inactive"
+                      role="status"
+                      aria-live="polite">
+                    Not tracking
+                </span>
+
+            </div>
+
+            <div class="button-group">
+
+                <button id="startBtn"
+                        type="button"
+                        class="primary-btn">
+                    📍 Start Tracking
+                </button>
+
+                <button id="stopBtn"
+                        type="button"
+                        class="secondary-btn"
+                        disabled>
+                    ⏹ Stop Tracking
+                </button>
+
+                <button id="clearBtn"
+                        type="button"
+                        class="secondary-btn">
+                    Clear Readings
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================
+     BSUN SAT-NAV INTERACTIVE MAP
+======================================== -->
+
+<!-- ========================================
+     DESTINATION SEARCH
+======================================== -->
+
+<section class="panel">
+
+    <h2>Destination Search</h2>
+
+    <p class="search-description">
+        Enter a town, city, postcode or destination.
+    </p>
+
+    <form id="destinationForm" class="destination-form">
+
+        <input
+            type="search"
+            id="destinationInput"
+            placeholder="e.g. Oxford, England"
+            aria-label="Enter destination"
+            minlength="3"
+            maxlength="150"
+            required
+        >
+
+        <button
+            type="submit"
+            id="searchDestinationBtn">
+            🔍 Search Destination
+        </button>
+
+    </form>
+
+    <p id="destinationStatus" role="status" aria-live="polite">
+        Enter a destination to begin.
+    </p>
+
+    <p id="destinationResult"></p>
+
+    <!-- ========================================
+     BSUN SAT-NAV v0.4
+     DRIVING ROUTE CONTROLS
+======================================== -->
+
+<div class="route-controls">
+
+    <button
+        type="button"
+        id="showRouteBtn"
+        disabled>
+        🚗 Show Route
+    </button>
+
+</div>
+
+<!-- ========================================
+     BSUN SAT-NAV v0.5
+     NAVIGATION CONTROLS
+======================================== -->
+
+<div class="navigation-controls">
+
+    <button
+        type="button"
+        id="goBtn"
+        disabled>
+        ▶ GO — Start Navigation
+    </button>
+
+    <button
+        type="button"
+        id="stopNavigationBtn"
+        disabled>
+        ⏹ Stop Navigation
+    </button>
+
+    <button
+        type="button"
+        id="voiceToggleBtn"
+        aria-pressed="true">
+        🔊 Voice On
+    </button>
+
+</div>
+
+<div class="navigation-display">
+
+    <h3>Navigation Guidance</h3>
+
+    <p id="navigationStatus" role="status" aria-live="polite">
+        Calculate a driving route to begin navigation.
+    </p>
+
+    <p id="nextTurn">
+        Next turn: —
+    </p>
+
+    <p id="remainingDistance">
+        Remaining distance: —
+    </p>
+
+</div>
+
+<div class="route-information">
+
+    <p id="routeStatus" role="status" aria-live="polite">
+        Search for a destination and start GPS tracking
+        to calculate a driving route.
+    </p>
+
+    <div id="routeResults" hidden>
+
+        <p>
+            <strong>Journey Distance:</strong>
+            <span id="routeDistance">—</span>
+        </p>
+
+        <p>
+            <strong>Estimated Driving Time:</strong>
+            <span id="routeDuration">—</span>
+        </p>
+
+    </div>
+
+</div>
+
+
+    <p class="search-attribution">
+        Search data © OpenStreetMap contributors.
+    </p>
+
+</section>
+
+<section class="panel">
+
+    <div class="map-header">
+
+        <h2>Interactive Map</h2>
+
+        <button
+            id="centreMapBtn"
+            type="button"
+            class="secondary-btn">
+            📍 Centre on My Location
+        </button>
+
+    </div>
+
+    <div
+        id="map"
+        role="region"
+        aria-label="Interactive navigation map">
+    </div>
+
+    <p class="map-information">
+        Allow location access to display your
+        approximate position on the map.
+    </p>
+
+</section>
+
+        <section class="panel">
+
+            <h2>Current Location</h2>
+
+            <div class="info-grid">
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Latitude
+                    </span>
+
+                    <strong id="latitude">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Longitude
+                    </span>
+
+                    <strong id="longitude">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        GPS Accuracy
+                    </span>
+
+                    <strong id="accuracy">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Speed
+                    </span>
+
+                    <strong id="speed">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Heading
+                    </span>
+
+                    <strong id="heading">
+                        —
+                    </strong>
+
+                </div>
+
+                <div class="info-card">
+
+                    <span class="info-label">
+                        Last Update
+                    </span>
+
+                    <strong id="lastUpdate">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="panel">
+
+            <h2>Navigation Information</h2>
+
+            <p class="information">
+    Bsun Sat-Nav currently provides live GPS tracking,
+    interactive maps, destination search and driving
+    route calculation.
+
+    Turn-by-turn navigation, voice guidance and
+    automatic rerouting are planned for future versions.
+</p>
+
+            <p class="warning">
+                ⚠️ This version is a GPS tracking prototype
+                and must not be relied upon for driving navigation.
+            </p>
+
+        </section>
+
+        <footer>
+
+            <p>
+                © 2026 Bisan Subba. All rights reserved.
+            </p>
+
+            <p>
+                Bsun Sat-Nav • Version 0.4
+            </p>
+
+        </footer>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+    "name": "Bsun Sat-Nav",
+    "short_name": "Bsun Sat-Nav",
+
+    "description": "A GPS tracking and navigation utility developed by Bisan Subba.",
+
+    "start_url": "./",
+
+    "scope": "./",
+
+    "display": "standalone",
+
+    "background_color": "#06112b",
+
+    "theme_color": "#06112b",
+
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
