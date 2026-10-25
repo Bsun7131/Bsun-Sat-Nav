@@ -1483,7 +1483,16 @@ window.addEventListener("resize", () => {
             return;
         }
 
+        // Copyright (c) 2026 Bisan Subba.
+// Bsun Sat-Nav v0.7 — Additional Map Resize Check
+
+map.resize();
+
+setTimeout(() => {
+    if (map) {
         map.resize();
+    }
+}, 500);
 
     }, 300);
 
