@@ -668,12 +668,12 @@ function updateMapLocation(latitude, longitude, accuracy) {
 
         const cameraOptions = {
             center: location,
-            zoom: 19,
-            pitch: 65,
+            zoom: 17,
+            pitch: 55,
             duration: 500,
            padding: {
     top: Math.round(
-        map.getContainer().clientHeight * 0.35
+        map.getContainer().clientHeight * 0.40
     ),
     bottom: 0,
     left: 0,
