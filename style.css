@@ -14,13 +14,13 @@ body {
 
     font-family: Arial, Helvetica, sans-serif;
 
-    background:
-        linear-gradient(
-            135deg,
-            #020617,
-            #06112b,
-            #10264d
-        );
+    background: linear-gradient(
+    135deg,
+    #101010 0%,
+    #302600 40%,
+    #594400 75%,
+    #181400 100%
+);
 
     color: #e5e7eb;
 
