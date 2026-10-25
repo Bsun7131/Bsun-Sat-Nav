@@ -1141,8 +1141,35 @@ function updateRouteButton() {
 
 function clearDisplayedRoute() {
 
-      routeReady = false;
+    routeReady = false;
     navigationActive = false;
+
+    // Release Screen Wake Lock when the route is cleared.
+    releaseWakeLock();
+
+    // Exit navigation mode.
+    document.body.classList.remove("navigation-mode");
+
+    // Restore the normal MapLibre camera.
+    if (map) {
+        requestAnimationFrame(() => {
+
+            map.resize();
+
+            map.easeTo({
+                pitch: 0,
+                bearing: 0,
+                padding: {
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                },
+                duration: 500
+            });
+
+        });
+    }
 
     navigationSteps = [];
 
