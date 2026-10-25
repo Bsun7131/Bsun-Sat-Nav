@@ -20,13 +20,28 @@ Bsun Sat-Nav — Live GPS Tracking
 
     <title>Bsun Sat-Nav | Live GPS Tracking</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=0.7.5">
 
-    <!-- Leaflet Interactive Mapping Library -->
+    <!-- ========================================
+     BSUN SAT-NAV v0.7
+     MAPLIBRE GL JS LIBRARY
+     Copyright (c) 2026 Bisan Subba.
+     All rights reserved.
+======================================== -->
+
+<!-- MapLibre GL JS Stylesheet -->
 <link
     rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    href="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.css"
 >
+
+<!-- MapLibre GL JS Engine -->
+<script
+    src="https://unpkg.com/maplibre-gl@5.6.2/dist/maplibre-gl.js"
+    defer>
+</script>
+
+    
     
 
     <link rel="manifest" href="manifest.json">
@@ -35,14 +50,10 @@ Bsun Sat-Nav — Live GPS Tracking
           type="image/png"
           href="icons/icon-192.png">
 
-    <!-- Leaflet JavaScript Library -->
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    defer>
-</script>
+   
 
 <!-- Bsun Sat-Nav JavaScript -->
-<script src="script.js" defer></script>
+<script src="script.js?v=0.7.8" defer></script>
 </head>
 
 <body>
@@ -370,10 +381,12 @@ Bsun Sat-Nav — Live GPS Tracking
     automatic rerouting are planned for future versions.
 </p>
 
+           <!-- 
             <p class="warning">
                 ⚠️ This version is a GPS tracking prototype
                 and must not be relied upon for driving navigation.
-            </p>
+            </p> 
+            -->
 
         </section>
 
