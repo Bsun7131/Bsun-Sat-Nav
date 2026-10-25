@@ -862,6 +862,49 @@ const navigationStatus =
 let navigationActive = false;
 let routeReady = false;
 
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// BSUN SAT-NAV v0.8
+// SCREEN WAKE LOCK
+// ========================================
+
+let wakeLock = null;
+
+// Request screen wake lock
+async function requestWakeLock() {
+
+    if (!("wakeLock" in navigator)) {
+        console.log("Screen Wake Lock API not supported.");
+        return;
+    }
+
+    try {
+        wakeLock = await navigator.wakeLock.request("screen");
+
+        console.log("Screen Wake Lock activated.");
+
+    } catch (error) {
+        console.log("Wake Lock request failed:", error);
+    }
+}
+
+// Release screen wake lock
+async function releaseWakeLock() {
+
+    if (wakeLock !== null) {
+
+        try {
+            await wakeLock.release();
+            console.log("Screen Wake Lock released.");
+
+        } catch (error) {
+            console.log("Wake Lock release failed:", error);
+        }
+
+        wakeLock = null;
+    }
+}
+
 let selectedDestination = null;
 
 let displayedRoute = null;
@@ -1155,6 +1198,12 @@ goBtn.addEventListener("click", () => {
 // ========================================
 
 navigationActive = true;
+
+// BSUN SAT-NAV v0.8 — Keep screen awake during navigation
+requestWakeLock();
+
+// Activate dedicated navigation layout
+document.body.classList.add("navigation-mode");
 
 // Activate dedicated navigation layout
 document.body.classList.add("navigation-mode");
