@@ -1473,10 +1473,20 @@ if (navigationSteps.length > 0) {
 // All rights reserved.
 // ========================================
 
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.8
+// RELEASE SCREEN WAKE LOCK ON STOP
+// ========================================
+
 // STOP NAVIGATION
 stopNavigationBtn.addEventListener("click", () => {
 
     navigationActive = false;
+
+    // Release Screen Wake Lock
+    releaseWakeLock();
 
     // Restore the normal application layout
     document.body.classList.remove("navigation-mode");
