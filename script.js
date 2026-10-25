@@ -985,38 +985,100 @@ let routeReady = false;
 // SCREEN WAKE LOCK MANAGEMENT
 // ========================================
 
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.8
+// SCREEN WAKE LOCK SAFETY MANAGEMENT
+// ========================================
+
 let wakeLock = null;
+let wakeLockRequest = null;
 
 async function requestWakeLock() {
+
+    // Wake Lock is needed only during active navigation.
+    if (!navigationActive ||
+        document.visibilityState !== "visible") {
+        return;
+    }
 
     if (!("wakeLock" in navigator)) {
         console.log("Screen Wake Lock is not supported.");
         return;
     }
 
+    // Do not request another lock if one is already active.
+    if (wakeLock && !wakeLock.released) {
+        return;
+    }
+
+    // Prevent overlapping requests.
+    if (wakeLockRequest) {
+        return wakeLockRequest;
+    }
+
+    wakeLockRequest = (async () => {
+
+        try {
+
+            const lock =
+                await navigator.wakeLock.request("screen");
+
+            // Navigation might have stopped while waiting.
+            if (!navigationActive ||
+                document.visibilityState !== "visible") {
+
+                await lock.release();
+                return;
+            }
+
+            wakeLock = lock;
+
+            console.log("Screen Wake Lock activated.");
+
+        } catch (error) {
+
+            console.warn("Screen Wake Lock failed:", error);
+
+        }
+
+    })();
+
     try {
-        wakeLock = await navigator.wakeLock.request("screen");
-        console.log("Screen Wake Lock activated.");
-    } catch (error) {
-        console.warn("Screen Wake Lock failed:", error);
+        await wakeLockRequest;
+    } finally {
+        wakeLockRequest = null;
     }
 }
 
 async function releaseWakeLock() {
 
-    if (wakeLock === null) {
+    // Remove our reference to the current lock.
+    const lock = wakeLock;
+    wakeLock = null;
+
+    if (!lock) {
         return;
     }
 
     try {
-        await wakeLock.release();
-        console.log("Screen Wake Lock released.");
-    } catch (error) {
-        console.warn("Unable to release Wake Lock:", error);
-    }
 
-    wakeLock = null;
+        if (!lock.released) {
+            await lock.release();
+        }
+
+        console.log("Screen Wake Lock released.");
+
+    } catch (error) {
+
+        console.warn(
+            "Unable to release Wake Lock:",
+            error
+        );
+    }
 }
+
 // ========================================
 // Copyright (c) 2026 Bisan Subba.
 // All rights reserved.
