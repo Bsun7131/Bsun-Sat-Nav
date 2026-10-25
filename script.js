@@ -1320,8 +1320,12 @@ stopNavigationBtn.addEventListener("click", () => {
 
     navigationActive = false;
 
+    // BSUN SAT-NAV v0.8 — Release screen wake lock
+    releaseWakeLock();
+
     // Restore the normal application layout
     document.body.classList.remove("navigation-mode");
+    
 
     goBtn.disabled = !routeReady;
     stopNavigationBtn.disabled = true;
