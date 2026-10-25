@@ -1017,6 +1017,30 @@ async function releaseWakeLock() {
 
     wakeLock = null;
 }
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.8
+// RESTORE SCREEN WAKE LOCK
+// ========================================
+
+// Restore Wake Lock when the app becomes visible again.
+document.addEventListener("visibilitychange", () => {
+
+    // Only request Wake Lock during active navigation.
+    if (!navigationActive) {
+        return;
+    }
+
+    // Only request when the page is visible.
+    if (document.visibilityState === "visible") {
+
+        // Avoid requesting another lock if one is active.
+        if (wakeLock === null || wakeLock.released) {
+            requestWakeLock();
+        }
+    }
+});
 
 let selectedDestination = null;
 
