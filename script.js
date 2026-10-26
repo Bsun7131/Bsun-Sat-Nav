@@ -531,6 +531,57 @@ console.log("Road layers matched:", roadLayers.length);
     
 
 });
+
+    // ========================================
+// BSUN SAT-NAV v0.8 — DEVELOPER CREDIT
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
+
+const developerControl = {
+
+    onAdd() {
+
+        const container = document.createElement("div");
+        container.className = "maplibregl-ctrl";
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "Developer: Bisan Subba";
+        button.title = "Visit developer portfolio";
+
+        Object.assign(button.style, {
+            background: "#ffffff",
+            color: "#17233b",
+            border: "1px solid #d1d5db",
+            borderRadius: "8px",
+            padding: "10px 12px",
+            fontSize: "12px",
+            fontWeight: "600",
+            cursor: "pointer",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)"
+        });
+
+        button.addEventListener("click", () => {
+            window.open(
+                "https://bsun7131.github.io/",
+                "_blank",
+                "noopener,noreferrer"
+            );
+        });
+
+        container.appendChild(button);
+        this.container = container;
+
+        return container;
+    },
+
+    onRemove() {
+        this.container?.remove();
+    }
+};
+
+map.addControl(developerControl, "bottom-left");
     
 // Add zoom and rotation controls
 map.addControl(
