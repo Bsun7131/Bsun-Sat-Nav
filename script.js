@@ -495,11 +495,36 @@ map.on("load", () => {
 
         const originalWidth = layer.paint["line-width"];
 
-        map.setPaintProperty(
-            layer.id,
-            "line-width",
-            ["*", originalWidth, 1.5]
-        );
+let widerWidth;
+
+if (typeof originalWidth === "number") {
+
+    widerWidth = originalWidth * 1.5;
+
+} else if (
+    Array.isArray(originalWidth) &&
+    originalWidth[0] === "interpolate" &&
+    Array.isArray(originalWidth[2]) &&
+    originalWidth[2][0] === "zoom"
+) {
+
+    widerWidth = originalWidth.map((value, index) =>
+        index >= 4 && index % 2 === 0
+            ? ["*", value, 1.5]
+            : value
+    );
+
+} else {
+
+    return;
+
+}
+
+map.setPaintProperty(
+    layer.id,
+    "line-width",
+    widerWidth
+);
 
     });
 
