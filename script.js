@@ -188,6 +188,9 @@ vehicleArrow.style.transform =
         "active"
     );
 
+    // Check upcoming route manoeuvre after every GPS update.
+updateAutomaticVoice(position);
+
 }
 
 
@@ -1438,6 +1441,7 @@ function clearDisplayedRoute() {
 
     routeReady = false;
     navigationActive = false;
+    resetAutomaticVoice();
 
     // Release Screen Wake Lock when the route is cleared.
     releaseWakeLock();
@@ -1774,6 +1778,8 @@ goBtn.addEventListener("click", () => {
 
 navigationActive = true;
 
+resetAutomaticVoice();
+
 // Request Screen Wake Lock during navigation
 requestWakeLock();
 
@@ -1913,7 +1919,9 @@ if (
 stopNavigationBtn.addEventListener("click", () => {
 
     navigationActive = false;
-
+    
+resetAutomaticVoice();
+    
     // Release Screen Wake Lock
     releaseWakeLock();
 
