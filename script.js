@@ -527,7 +527,7 @@ map.setPaintProperty(
 );
 
     });
-alert("Road width code completed. Matched layers: " + roadLayers.length);
+console.log("Road layers matched:", roadLayers.length);
     
 
 });
