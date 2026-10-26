@@ -527,8 +527,8 @@ map.setPaintProperty(
 );
 
     });
-
-    console.log("Road width styling applied.");
+alert("Road width code completed. Matched layers: " + roadLayers.length);
+    
 
 });
     
