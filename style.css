@@ -1184,3 +1184,32 @@ body.navigation-mode .maplibregl-top.maplibregl-right {
 body.navigation-mode .maplibregl-top.maplibregl-right .maplibregl-ctrl {
     margin-top: 0 !important;
 }
+/* ========================================
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+   Bsun Sat-Nav v0.8 — Developer Credit
+======================================== */
+
+/* Position developer credit beside zoom controls */
+#map .maplibregl-bottom-left .maplibregl-ctrl:has(
+    > button[title="Visit developer portfolio"]
+) {
+    position: absolute;
+    left: 70px;
+    bottom: 95px;
+    margin: 0;
+    z-index: 5;
+}
+
+/* Green developer credit button */
+#map button[title="Visit developer portfolio"] {
+    background: #15803d !important;
+    color: #ffffff !important;
+    border: 1px solid #166534 !important;
+    border-radius: 8px;
+    width: auto !important;
+    max-width: calc(100vw - 90px);
+    padding: 9px 12px !important;
+    font-size: 12px !important;
+    white-space: nowrap;
+}
