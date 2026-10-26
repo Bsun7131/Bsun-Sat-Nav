@@ -477,7 +477,36 @@ map = new maplibregl.Map({
 
     attributionControl: true
 });
+// ========================================
+// BSUN SAT-NAV v0.8 — WIDER ROAD DISPLAY
+// Copyright (c) 2026 Bisan Subba.
+// ========================================
 
+map.on("load", () => {
+
+    const roadLayers = map.getStyle().layers.filter(layer =>
+        layer.type === "line" &&
+        /road|street|highway|motorway|trunk|primary|secondary|tertiary|residential/i.test(layer.id) &&
+        layer.paint &&
+        layer.paint["line-width"] !== undefined
+    );
+
+    roadLayers.forEach(layer => {
+
+        const originalWidth = layer.paint["line-width"];
+
+        map.setPaintProperty(
+            layer.id,
+            "line-width",
+            ["*", originalWidth, 1.5]
+        );
+
+    });
+
+    console.log("Road width styling applied.");
+
+});
+    
 // Add zoom and rotation controls
 map.addControl(
     new maplibregl.NavigationControl(),
