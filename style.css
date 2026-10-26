@@ -1213,3 +1213,35 @@ body.navigation-mode .maplibregl-top.maplibregl-right .maplibregl-ctrl {
     font-size: 12px !important;
     white-space: nowrap;
 }
+/* ========================================
+   Copyright (c) 2026 Bisan Subba.
+   All rights reserved.
+   Bsun Sat-Nav v0.8 — Portrait Buttons
+======================================== */
+
+@media (orientation: portrait) and (max-width: 600px) {
+
+    body.navigation-mode .navigation-controls {
+        flex-direction: column;
+        align-items: flex-end;
+        flex-wrap: nowrap;
+        gap: 8px;
+
+        top: auto;
+        bottom: 15px;
+        right: 8px;
+
+        width: max-content;
+        max-width: calc(100vw - 16px);
+    }
+
+    body.navigation-mode .navigation-controls button {
+        flex: 0 0 auto;
+        width: auto;
+        min-width: max-content;
+        white-space: nowrap;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+}
