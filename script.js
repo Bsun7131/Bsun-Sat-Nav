@@ -1379,7 +1379,7 @@ map.addLayer({
     },
     paint: {
         "line-color": "#2563eb",
-        "line-width": 6,
+        "line-width": 12,
         "line-opacity": 0.9
     }
 });
