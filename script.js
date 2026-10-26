@@ -1703,7 +1703,28 @@ if (navigationSteps.length > 0) {
 
     nextTurnElement.textContent =
         "Next turn: " + instruction;
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.8 — SPOKEN ROUTE INSTRUCTION
+// ========================================
 
+if (
+    "speechSynthesis" in window &&
+    typeof SpeechSynthesisUtterance !== "undefined"
+) {
+
+    const spokenInstruction =
+        new SpeechSynthesisUtterance(instruction);
+
+    spokenInstruction.lang = "en-GB";
+    spokenInstruction.rate = 0.95;
+    spokenInstruction.volume = 1;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(spokenInstruction);
+
+}
     remainingDistanceElement.textContent =
         "Step distance: " +
         (firstStep.distance / 1609.344).toFixed(2) +
