@@ -1254,7 +1254,164 @@ let routeRequestId = 0;
 // ========================================
 
 let navigationSteps = [];
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.8 — AUTOMATIC VOICE GUIDANCE
+// ========================================
 
+let nextVoiceStepIndex = 1;
+let announcedVoiceStepIndex = -1;
+let previousVoiceDistance = null;
+
+function resetAutomaticVoice() {
+    nextVoiceStepIndex = 1;
+    announcedVoiceStepIndex = -1;
+    previousVoiceDistance = null;
+
+    if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+    }
+}
+
+function gpsDistanceMetres(lat1, lon1, lat2, lon2) {
+    const radians = Math.PI / 180;
+    const dLat = (lat2 - lat1) * radians;
+    const dLon = (lon2 - lon1) * radians;
+
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1 * radians) *
+        Math.cos(lat2 * radians) *
+        Math.sin(dLon / 2) ** 2;
+
+    return 6371000 * 2 *
+        Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function describeVoiceStep(step) {
+    const maneuver = step.maneuver || {};
+    const type = maneuver.type || "continue";
+    const direction = maneuver.modifier || "";
+    const road = step.name ? ` onto ${step.name}` : "";
+
+    if (type === "arrive") {
+        return "You are approaching your destination.";
+    }
+
+    if (type === "roundabout" || type === "rotary") {
+        const exit = maneuver.exit
+            ? `take exit ${maneuver.exit}`
+            : "follow the indicated exit";
+
+        return `At the roundabout, ${exit}${road}.`;
+    }
+
+    if (type === "turn" || type === "end of road") {
+        return `Turn ${direction}${road}.`;
+    }
+
+    if (type === "fork") {
+        return `Keep ${direction}${road}.`;
+    }
+
+    if (type === "merge") {
+        return `Merge ${direction}${road}.`;
+    }
+
+    return `Continue${road}.`;
+}
+
+function updateAutomaticVoice(position) {
+
+    if (!navigationActive || !routeReady) return;
+
+    const step = navigationSteps[nextVoiceStepIndex];
+    if (!step) return;
+
+    if (
+        !("speechSynthesis" in window) ||
+        typeof SpeechSynthesisUtterance === "undefined"
+    ) return;
+
+    const coords = position.coords;
+
+    // Ignore poorly located GPS readings.
+    if (
+        !Number.isFinite(coords.accuracy) ||
+        coords.accuracy > 50
+    ) return;
+
+    const location = step.maneuver?.location;
+
+    if (
+        !Array.isArray(location) ||
+        !Number.isFinite(location[0]) ||
+        !Number.isFinite(location[1])
+    ) return;
+
+    // OSRM locations use [longitude, latitude].
+    const distance = gpsDistanceMetres(
+        coords.latitude,
+        coords.longitude,
+        location[1],
+        location[0]
+    );
+
+    const speed = Number.isFinite(coords.speed)
+        ? Math.max(0, coords.speed)
+        : 0;
+
+    // Higher speed gives more advance warning.
+    const warningDistance =
+        Math.max(120, Math.min(500, speed * 12));
+
+    if (
+        announcedVoiceStepIndex !== nextVoiceStepIndex &&
+        distance <= warningDistance
+    ) {
+        const message = new SpeechSynthesisUtterance(
+            "Approaching. " + describeVoiceStep(step)
+        );
+
+        message.lang = "en-GB";
+        message.rate = 0.95;
+        message.volume = 1;
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(message);
+
+        announcedVoiceStepIndex = nextVoiceStepIndex;
+
+        console.log(
+            "Automatic voice:",
+            message.text,
+            Math.round(distance),
+            "metres from manoeuvre"
+        );
+    }
+
+    // Move to the following manoeuvre once very close,
+    // or after moving away from a recently approached turn.
+    const maneuverPassed =
+        distance <= 35 ||
+        (
+            previousVoiceDistance !== null &&
+            previousVoiceDistance < 90 &&
+            distance > previousVoiceDistance + 25
+        );
+
+    if (
+        announcedVoiceStepIndex === nextVoiceStepIndex &&
+        maneuverPassed
+    ) {
+        nextVoiceStepIndex++;
+        announcedVoiceStepIndex = -1;
+        previousVoiceDistance = null;
+    } else {
+        previousVoiceDistance = distance;
+    }
+}
 // ========================================
 // UPDATE SHOW ROUTE BUTTON
 // ========================================
