@@ -1095,29 +1095,7 @@ let routeReady = false;
 const voiceToggleBtn =
     document.getElementById("voiceToggleBtn");
 
-voiceToggleBtn.addEventListener("click", () => {
 
-    if (
-        !("speechSynthesis" in window) ||
-        typeof SpeechSynthesisUtterance === "undefined"
-    ) {
-        alert("Voice is not supported by this browser.");
-        return;
-    }
-
-    window.speechSynthesis.cancel();
-
-    const message = new SpeechSynthesisUtterance(
-        "Bsun Sat Nav voice test successful."
-    );
-
-    message.lang = "en-GB";
-    message.rate = 0.95;
-    message.volume = 1;
-
-    window.speechSynthesis.speak(message);
-
-});
 
 // ========================================
 // Copyright (c) 2026 Bisan Subba.
