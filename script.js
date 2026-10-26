@@ -191,6 +191,9 @@ vehicleArrow.style.transform =
     // Check upcoming route manoeuvre after every GPS update.
 updateAutomaticVoice(position);
 
+    // Check whether the vehicle has left the route.
+    checkRouteDeviation(position);
+
 }
 
 
@@ -1235,6 +1238,123 @@ let routeRequestId = 0;
 // ========================================
 
 let navigationSteps = [];
+
+// ========================================
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// BSUN SAT-NAV v0.8 — ROUTE DEVIATION DETECTION
+// ========================================
+
+let activeRouteCoordinates = [];
+let offRouteReadings = 0;
+let offRouteReported = false;
+
+function distanceToRouteMetres(latitude, longitude) {
+
+    if (activeRouteCoordinates.length < 2) {
+        return Infinity;
+    }
+
+    const metresPerLatitude = 111320;
+
+    const metresPerLongitude =
+        111320 * Math.cos(latitude * Math.PI / 180);
+
+    let closestDistance = Infinity;
+
+    for (let i = 1; i < activeRouteCoordinates.length; i++) {
+
+        const start = activeRouteCoordinates[i - 1];
+        const end = activeRouteCoordinates[i];
+
+        const ax = (start[0] - longitude) * metresPerLongitude;
+        const ay = (start[1] - latitude) * metresPerLatitude;
+
+        const bx = (end[0] - longitude) * metresPerLongitude;
+        const by = (end[1] - latitude) * metresPerLatitude;
+
+        const dx = bx - ax;
+        const dy = by - ay;
+
+        const lengthSquared = dx * dx + dy * dy;
+
+        const t = lengthSquared > 0
+            ? Math.max(0, Math.min(1,
+                -(ax * dx + ay * dy) / lengthSquared))
+            : 0;
+
+        const distance = Math.hypot(
+            ax + t * dx,
+            ay + t * dy
+        );
+
+        closestDistance = Math.min(
+            closestDistance,
+            distance
+        );
+    }
+
+    return closestDistance;
+}
+
+function checkRouteDeviation(position) {
+
+    if (!navigationActive ||
+        !routeReady ||
+        activeRouteCoordinates.length < 2) {
+
+        offRouteReadings = 0;
+        offRouteReported = false;
+        return;
+    }
+
+    const coords = position.coords;
+
+    // Ignore unreliable GPS positions.
+    if (!Number.isFinite(coords.accuracy) ||
+        coords.accuracy > 35) {
+        return;
+    }
+
+    const distance = distanceToRouteMetres(
+        coords.latitude,
+        coords.longitude
+    );
+
+    const tolerance = Math.max(50, coords.accuracy * 2);
+
+    if (distance > tolerance) {
+
+        offRouteReadings++;
+
+        if (offRouteReadings >= 3 && !offRouteReported) {
+
+            offRouteReported = true;
+
+            navigationStatus.textContent =
+                "Possible route deviation (test only).";
+
+            console.warn(
+                "Possible route deviation:",
+                Math.round(distance),
+                "metres"
+            );
+        }
+
+    } else {
+
+        offRouteReadings = 0;
+
+        if (offRouteReported) {
+
+            offRouteReported = false;
+
+            navigationStatus.textContent =
+                "Navigation mode started.";
+        }
+    }
+}
+
 // ========================================
 // Copyright (c) 2026 Bisan Subba.
 // All rights reserved.
@@ -1420,6 +1540,11 @@ function clearDisplayedRoute() {
     routeReady = false;
     navigationActive = false;
     resetAutomaticVoice();
+
+activeRouteCoordinates = [];
+offRouteReadings = 0;
+offRouteReported = false;
+    
 
     // Release Screen Wake Lock when the route is cleared.
     releaseWakeLock();
@@ -1622,6 +1747,9 @@ if (requestId !== routeRequestId) {
 
 // OSRM already provides longitude, latitude coordinates.
 const routePoints = route.geometry.coordinates;
+        activeRouteCoordinates = routePoints;
+offRouteReadings = 0;
+offRouteReported = false;
 
 // Remove the previous route layer and source.
 if (map.getLayer("driving-route")) {
