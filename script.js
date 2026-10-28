@@ -7,7 +7,7 @@ Bsun Sat-Nav — GPS Tracking Engine
 "use strict";
 
 // ========================================
-// ELEMENT REFERENCES
+// ELEMENT REFERENCES 
 // ========================================
 
 const startBtn = document.getElementById("startBtn");
