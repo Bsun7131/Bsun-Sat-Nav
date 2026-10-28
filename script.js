@@ -1709,8 +1709,7 @@ function describeVoiceStep(step) {
 }
 
 function updateAutomaticVoice(position) {
-
-    if (!navigationActive || !routeReady) return;
+if (!navigationActive || !routeReady || rerouteInProgress) return;
 
     const step = navigationSteps[nextVoiceStepIndex];
     if (!step) return;
