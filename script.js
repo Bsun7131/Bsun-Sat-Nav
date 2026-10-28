@@ -2310,9 +2310,9 @@ if (
 stopNavigationBtn.addEventListener("click", () => {
 
     navigationActive = false;
-    
+
 resetAutomaticVoice();
-    
+resetReroutingState();
     // Release Screen Wake Lock
     releaseWakeLock();
 
