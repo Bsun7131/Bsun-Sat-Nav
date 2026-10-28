@@ -1327,19 +1327,23 @@ function checkRouteDeviation(position) {
 
         offRouteReadings++;
 
-        if (offRouteReadings >= 3 && !offRouteReported) {
+        
+if (offRouteReadings >= 3) {
 
-            offRouteReported = true;
+    if (!offRouteReported) {
 
-            navigationStatus.textContent =
-                "Possible route deviation (test only).";
+        offRouteReported = true;
 
-            console.warn(
-                "Possible route deviation:",
-                Math.round(distance),
-                "metres"
-            );
-        }
+        console.warn(
+            "Confirmed route deviation:",
+            Math.round(distance),
+            "metres"
+        );
+    }
+
+    requestAutomaticReroute(position);
+}
+
 
     } else {
 
