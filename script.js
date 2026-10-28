@@ -550,7 +550,20 @@ console.log("Road layers matched:", roadLayers.length);
 // ========================================
 
 map.on("style.load", () => {
+
     restoreNavigationRoute();
+
+    if (
+        latestLatitude !== null &&
+        latestLongitude !== null
+    ) {
+        updateMapLocation(
+            latestLatitude,
+            latestLongitude,
+            0
+        );
+    }
+
 });
 
     // ========================================
