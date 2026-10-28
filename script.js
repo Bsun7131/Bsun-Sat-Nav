@@ -2169,6 +2169,7 @@ goBtn.addEventListener("click", () => {
 navigationActive = true;
 
 resetAutomaticVoice();
+resetReroutingState();
 
 // Request Screen Wake Lock during navigation
 requestWakeLock();
