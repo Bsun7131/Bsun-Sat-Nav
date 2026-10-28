@@ -1354,6 +1354,28 @@ if (offRouteReadings >= 3) {
         offRouteReadings = 0;
 
         if (offRouteReported) {
+
+    // Copyright © 2026 Bisan Subba.
+    // All rights reserved.
+    // Developed by Bisan Subba.
+    // BSUN SAT-NAV v0.8 — RETURN TO ROUTE SAFEGUARD
+
+    offRouteReported = false;
+
+    // Invalidate any pending OSRM rerouting response.
+    if (rerouteInProgress) {
+        rerouteGeneration++;
+        rerouteInProgress = false;
+    }
+
+    navigationStatus.textContent =
+        "Back on original route.";
+
+    showRerouteNotice(
+        "Back on original route.",
+        3000
+    );
+}
     }
 }
 
