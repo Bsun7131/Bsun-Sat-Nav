@@ -446,6 +446,7 @@ let accuracyCircle = null;
 
 let latestLatitude = null;
 let latestLongitude = null;
+let latestAccuracy = null;
 let latestHeading = null;
 
 let firstLocationReceived = false;
@@ -558,10 +559,10 @@ map.on("style.load", () => {
         latestLongitude !== null
     ) {
         updateMapLocation(
-            latestLatitude,
-            latestLongitude,
-            0
-        );
+    latestLatitude,
+    latestLongitude,
+    latestAccuracy
+);
     }
 
 });
@@ -646,6 +647,7 @@ function updateMapLocation(latitude, longitude, accuracy) {
 
     latestLatitude = latitude;
     latestLongitude = longitude;
+    latestAccuracy = accuracy;
 
     // MapLibre coordinates: [longitude, latitude]
     const location = [longitude, latitude];
