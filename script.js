@@ -1509,7 +1509,13 @@ async function requestAutomaticReroute(position) {
             `${destination.longitude},${destination.latitude}` +
             "?overview=full&geometries=geojson&steps=true";
 
-        const response = await fetch(url);
+        // Copyright © 2026 Bisan Subba. All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.8 — OSRM REQUEST TIMEOUT
+
+const response = await fetch(url, {
+    signal: AbortSignal.timeout(15000)
+});
 
         if (!response.ok) {
             throw new Error(
