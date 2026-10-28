@@ -1239,6 +1239,63 @@ let selectedDestination = null;
 let displayedRoute = null;
 
 let routeRequestId = 0;
+// ========================================
+// Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — PRESERVE ROUTE DATA
+// ========================================
+
+function restoreNavigationRoute() {
+
+    if (
+        !map ||
+        !map.isStyleLoaded() ||
+        activeRouteCoordinates.length < 2
+    ) {
+        return;
+    }
+
+    const routeData = {
+        type: "Feature",
+        geometry: {
+            type: "LineString",
+            coordinates: activeRouteCoordinates
+        },
+        properties: {}
+    };
+
+    if (!map.getSource("driving-route")) {
+
+        map.addSource("driving-route", {
+            type: "geojson",
+            data: routeData
+        });
+
+    } else {
+
+        map.getSource("driving-route").setData(routeData);
+
+    }
+
+    if (!map.getLayer("driving-route")) {
+
+        map.addLayer({
+            id: "driving-route",
+            type: "line",
+            source: "driving-route",
+            layout: {
+                "line-join": "round",
+                "line-cap": "round"
+            },
+            paint: {
+                "line-color": "#2563eb",
+                "line-width": 12,
+                "line-opacity": 0.9
+            }
+        });
+    }
+}
 
 // ========================================
 // BSUN SAT-NAV v0.5
