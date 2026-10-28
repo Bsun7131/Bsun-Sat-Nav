@@ -1511,6 +1511,24 @@ async function requestAutomaticReroute(position) {
         ) {
             return;
         }
+        // BSUN SAT-NAV v0.8 — DELAYED OSRM RESPONSE SAFEGUARD
+// Copyright © 2026 Bisan Subba. All rights reserved.
+// Developed by Bisan Subba.
+
+// Discard the replacement route if GPS has confirmed
+// that the vehicle returned to the existing route.
+if (!offRouteReported) {
+
+    navigationStatus.textContent =
+        "Back on original route.";
+
+    showRerouteNotice(
+        "Back on original route — reroute cancelled.",
+        3000
+    );
+
+    return;
+}
 
         const route = data.routes?.[0];
         const points = route?.geometry?.coordinates;
