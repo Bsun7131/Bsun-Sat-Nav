@@ -1311,10 +1311,14 @@ function checkRouteDeviation(position) {
     const coords = position.coords;
 
     // Ignore unreliable GPS positions.
-    if (!Number.isFinite(coords.accuracy) ||
-        coords.accuracy > 35) {
-        return;
-    }
+    
+if (!Number.isFinite(coords.accuracy) ||
+    coords.accuracy > 35) {
+
+    offRouteReadings = 0;
+    return;
+}
+
 
     const distance = distanceToRouteMetres(
         coords.latitude,
@@ -1359,6 +1363,283 @@ if (offRouteReadings >= 3) {
     }
 }
 
+/*
+Copyright © 2026 Bisan Subba. All rights reserved.
+Developed by Bisan Subba.
+BSUN SAT-NAV v0.8 — AUTOMATIC REROUTING ENGINE
+*/
+
+let rerouteInProgress = false;
+let lastRerouteAttempt = 0;
+let rerouteFailures = 0;
+let rerouteGeneration = 0;
+let rerouteNoticeTimer = null;
+
+// Display a message over the navigation screen.
+function showRerouteNotice(message, duration = 0) {
+
+    let notice = document.getElementById(
+        "bsun-reroute-notice"
+    );
+
+    if (!notice) {
+
+        notice = document.createElement("div");
+
+        notice.id = "bsun-reroute-notice";
+        notice.setAttribute("role", "status");
+        notice.setAttribute("aria-live", "polite");
+
+        Object.assign(notice.style, {
+            position: "fixed",
+            bottom: "18px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            maxWidth: "90vw",
+            boxSizing: "border-box",
+            padding: "12px 18px",
+            borderRadius: "12px",
+            background: "rgba(15, 23, 42, 0.94)",
+            color: "#ffffff",
+            fontSize: "15px",
+            fontWeight: "600",
+            textAlign: "center",
+            zIndex: "2147483647",
+            pointerEvents: "none"
+        });
+
+        document.body.appendChild(notice);
+    }
+
+    clearTimeout(rerouteNoticeTimer);
+
+    notice.textContent = message;
+    notice.style.display = "block";
+
+    if (duration > 0) {
+
+        rerouteNoticeTimer = setTimeout(() => {
+            notice.style.display = "none";
+        }, duration);
+    }
+}
+
+// Reset rerouting when a journey stops or restarts.
+function resetReroutingState() {
+
+    rerouteGeneration++;
+
+    rerouteInProgress = false;
+    lastRerouteAttempt = 0;
+    rerouteFailures = 0;
+
+    offRouteReadings = 0;
+    offRouteReported = false;
+
+    clearTimeout(rerouteNoticeTimer);
+
+    const notice = document.getElementById(
+        "bsun-reroute-notice"
+    );
+
+    if (notice) {
+        notice.style.display = "none";
+    }
+}
+
+// Request a replacement route automatically.
+async function requestAutomaticReroute(position) {
+
+    if (
+        !navigationActive ||
+        !routeReady ||
+        !selectedDestination ||
+        !map ||
+        rerouteInProgress ||
+        rerouteFailures >= 3
+    ) {
+        return;
+    }
+
+    // Limit rerouting requests to once every 30 seconds.
+    const now = Date.now();
+
+    if (now - lastRerouteAttempt < 30000) {
+        return;
+    }
+
+    const coords = position.coords;
+
+    const generation = ++rerouteGeneration;
+    const routeVersion = routeRequestId;
+
+    lastRerouteAttempt = now;
+    rerouteInProgress = true;
+
+    navigationStatus.textContent =
+        "Off route — recalculating...";
+
+    showRerouteNotice(
+        "Off route — recalculating..."
+    );
+
+    try {
+
+        const destination = selectedDestination;
+
+        const url =
+            ROUTING_URL +
+            `${coords.longitude},${coords.latitude};` +
+            `${destination.longitude},${destination.latitude}` +
+            "?overview=full&geometries=geojson&steps=true";
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                `Routing service returned ${response.status}`
+            );
+        }
+
+        const data = await response.json();
+
+        // Ignore a response from a cancelled journey.
+        if (
+            generation !== rerouteGeneration ||
+            routeVersion !== routeRequestId ||
+            !navigationActive
+        ) {
+            return;
+        }
+
+        const route = data.routes?.[0];
+        const points = route?.geometry?.coordinates;
+
+        if (
+            data.code !== "Ok" ||
+            !Array.isArray(points) ||
+            points.length < 2
+        ) {
+            throw new Error(
+                "No replacement route available."
+            );
+        }
+
+        const routeSource = map.getSource(
+            "driving-route"
+        );
+
+        if (
+            !routeSource ||
+            typeof routeSource.setData !== "function"
+        ) {
+            throw new Error(
+                "Driving route source unavailable."
+            );
+        }
+
+        // Extract the replacement manoeuvres.
+        const newSteps = (route.legs || []).flatMap(
+            leg => Array.isArray(leg.steps)
+                ? leg.steps
+                : []
+        );
+
+        // Replace the blue route without resetting
+        // the driver's navigation camera.
+        routeSource.setData({
+            type: "Feature",
+            geometry: {
+                type: "LineString",
+                coordinates: points
+            },
+            properties: {}
+        });
+
+        // Store the updated journey.
+        activeRouteCoordinates = points;
+        navigationSteps = newSteps;
+
+        resetAutomaticVoice();
+
+        offRouteReadings = 0;
+        offRouteReported = false;
+        rerouteFailures = 0;
+
+        // Update the next-turn display.
+        const nextStep = newSteps[1];
+
+        document.getElementById(
+            "nextTurn"
+        ).textContent =
+            "Next turn: " +
+            (nextStep
+                ? describeVoiceStep(nextStep)
+                : "Continue towards destination.");
+
+        // Update the remaining journey distance.
+        const miles = route.distance / 1609.344;
+
+        document.getElementById(
+            "remainingDistance"
+        ).textContent =
+            `Remaining distance: ${miles.toFixed(1)} miles`;
+
+        routeDistance.textContent =
+            `${miles.toFixed(1)} miles`;
+
+        routeDuration.textContent =
+            formatJourneyDuration(route.duration);
+
+        routeStatus.textContent =
+            "Driving route recalculated.";
+
+        navigationStatus.textContent =
+            "Route recalculated.";
+
+        showRerouteNotice(
+            "New route ready",
+            4000
+        );
+
+        console.log(
+            "Automatic rerouting successful."
+        );
+
+    } catch (error) {
+
+        if (
+            generation !== rerouteGeneration ||
+            !navigationActive
+        ) {
+            return;
+        }
+
+        rerouteFailures++;
+
+        console.warn(
+            "Automatic rerouting failed:",
+            error
+        );
+
+        navigationStatus.textContent =
+            "Rerouting unavailable.";
+
+        showRerouteNotice(
+            rerouteFailures >= 3
+                ? "Rerouting unavailable — follow road signs"
+                : "Reroute failed — will retry if still off route",
+            5000
+        );
+
+    } finally {
+
+        if (generation === rerouteGeneration) {
+            rerouteInProgress = false;
+        }
+    }
+            }
+            
 // ========================================
 // Copyright (c) 2026 Bisan Subba.
 // All rights reserved.
