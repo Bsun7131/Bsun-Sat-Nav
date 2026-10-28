@@ -1336,14 +1336,24 @@ if (offRouteReadings >= 3) {
 
     if (!offRouteReported) {
 
-        offRouteReported = true;
+    offRouteReported = true;
 
-        console.warn(
-            "Confirmed route deviation:",
-            Math.round(distance),
-            "metres"
-        );
+    // Copyright © 2026 Bisan Subba.
+    // All rights reserved.
+    // Developed by Bisan Subba.
+    // BSUN SAT-NAV v0.8 — STOP OFF-ROUTE VOICE
+
+    if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
     }
+
+    console.warn(
+        "Confirmed route deviation:",
+        Math.round(distance),
+        "metres"
+    );
+}
+    
 
     requestAutomaticReroute(position);
 }
