@@ -188,11 +188,11 @@ vehicleArrow.style.transform =
         "active"
     );
 
-    // Check upcoming route manoeuvre after every GPS update.
-updateAutomaticVoice(position);
+// Check route deviation before voice guidance.
+checkRouteDeviation(position);
 
-    // Check whether the vehicle has left the route.
-    checkRouteDeviation(position);
+// Announce instructions only when appropriate.
+updateAutomaticVoice(position);
 
 }
 
