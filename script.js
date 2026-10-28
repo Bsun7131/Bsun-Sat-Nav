@@ -1354,12 +1354,6 @@ if (offRouteReadings >= 3) {
         offRouteReadings = 0;
 
         if (offRouteReported) {
-
-            offRouteReported = false;
-
-            navigationStatus.textContent =
-                "Navigation mode started.";
-        }
     }
 }
 
