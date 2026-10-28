@@ -461,17 +461,25 @@ function initialiseMap() {
     return;
 }
 
-   // ========================================
-// MAPLIBRE GL JS - MAP INITIALISATION
-// Copyright (c) 2026 Bisan Subba.
+    // ========================================
+// Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — DAY/NIGHT MAP STYLES
 // ========================================
+
+const DAY_MAP_STYLE =
+    "https://tiles.openfreemap.org/styles/liberty";
+
+const NIGHT_MAP_STYLE =
+    "https://tiles.openfreemap.org/styles/dark";
 
 // Initial view of the United Kingdom
 map = new maplibregl.Map({
     container: "map",
 
     // Free vector map tiles from OpenFreeMap
-    style: "https://tiles.openfreemap.org/styles/liberty",
+    style: DAY_MAP_STYLE,
 
     center: [-3.0, 54.5],
 
