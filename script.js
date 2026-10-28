@@ -1824,7 +1824,8 @@ function clearDisplayedRoute() {
     routeReady = false;
     navigationActive = false;
     resetAutomaticVoice();
-
+    resetReroutingState();
+    
 activeRouteCoordinates = [];
 offRouteReadings = 0;
 offRouteReported = false;
