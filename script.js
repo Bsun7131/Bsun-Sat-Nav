@@ -545,6 +545,13 @@ console.log("Road layers matched:", roadLayers.length);
     
 
 });
+    // ========================================
+// BSUN SAT-NAV v0.9 — RESTORE ROUTE AFTER STYLE CHANGE
+// ========================================
+
+map.on("style.load", () => {
+    restoreNavigationRoute();
+});
 
     // ========================================
 // BSUN SAT-NAV v0.8 — DEVELOPER CREDIT
