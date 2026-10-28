@@ -449,6 +449,8 @@ let latestLongitude = null;
 let latestAccuracy = null;
 let latestHeading = null;
 
+let currentMapMode = "day";
+
 let firstLocationReceived = false;
 
 // ========================================
