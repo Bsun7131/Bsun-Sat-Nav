@@ -493,7 +493,47 @@ function switchMapMode(mode) {
 // ========================================
 // INITIALISE INTERACTIVE MAP
 // ========================================
+// ========================================
+// BSUN SAT-NAV v0.9 — SUNRISE/SUNSET
+// ========================================
 
+// Calculate the Sun's approximate position using
+// GPS latitude, longitude and the current time.
+function calculateSunAltitude(latitude, longitude, date = new Date()) {
+    const radians = Math.PI / 180;
+    const days = date.getTime() / 86400000 - 10957.5;
+
+    const meanLongitude = (280.46 + 0.9856474 * days) * radians;
+    const meanAnomaly = (357.528 + 0.9856003 * days) * radians;
+
+    const eclipticLongitude = meanLongitude +
+        (1.915 * Math.sin(meanAnomaly) +
+         0.020 * Math.sin(2 * meanAnomaly)) * radians;
+
+    const obliquity = 23.439 * radians;
+
+    const declination = Math.asin(
+        Math.sin(obliquity) * Math.sin(eclipticLongitude)
+    );
+
+    const rightAscension = Math.atan2(
+        Math.cos(obliquity) * Math.sin(eclipticLongitude),
+        Math.cos(eclipticLongitude)
+    );
+
+    const siderealTime =
+        (280.16 + 360.9856235 * days + longitude) * radians;
+
+    const hourAngle = siderealTime - rightAscension;
+    const latitudeRadians = latitude * radians;
+
+    return Math.asin(
+        Math.sin(latitudeRadians) * Math.sin(declination) +
+        Math.cos(latitudeRadians) *
+        Math.cos(declination) *
+        Math.cos(hourAngle)
+    ) / radians;
+}
 function initialiseMap() {
 
     if (typeof maplibregl === "undefined") {
