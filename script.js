@@ -188,11 +188,20 @@ vehicleArrow.style.transform =
         "active"
     );
 
+
 // Check route deviation before voice guidance.
 checkRouteDeviation(position);
 
 // Announce instructions only when appropriate.
 updateAutomaticVoice(position);
+
+// Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — LIVE INSTRUCTION UPDATES
+
+// Update the instruction window using the latest GPS position.
+updateNavigationInstructions(position);
 
 }
 
@@ -1963,6 +1972,68 @@ function describeVoiceStep(step) {
     }
 
     return `Continue${road}.`;
+}
+/*
+Copyright © 2026 Bisan Subba.
+All rights reserved.
+Developed by Bisan Subba.
+
+BSUN SAT-NAV v0.9 — LIVE NAVIGATION INSTRUCTION DISPLAY
+*/
+
+function updateNavigationInstructions(position) {
+
+    // Only update instructions during active navigation.
+    if (!navigationActive || !routeReady) {
+        return;
+    }
+
+    // Find the upcoming manoeuvre.
+    const step = navigationSteps[nextVoiceStepIndex];
+
+    if (!step) {
+        return;
+    }
+
+    const location = step.maneuver?.location;
+
+    if (
+        !Array.isArray(location) ||
+        !Number.isFinite(location[0]) ||
+        !Number.isFinite(location[1])
+    ) {
+        return;
+    }
+
+    const coords = position.coords;
+
+// Ignore inaccurate GPS readings.
+if (
+    !Number.isFinite(coords.latitude) ||
+    !Number.isFinite(coords.longitude) ||
+    !Number.isFinite(coords.accuracy) ||
+    coords.accuracy > 50
+) {
+    return;
+}
+
+    // Calculate straight-line distance to the manoeuvre.
+    const distance = gpsDistanceMetres(
+        coords.latitude,
+        coords.longitude,
+        location[1],
+        location[0]
+    );
+
+    // Display the upcoming instruction.
+    document.getElementById("nextTurn").textContent =
+        "Next turn: " + describeVoiceStep(step);
+
+    // Display approximate distance to the manoeuvre.
+    const miles = distance / 1609.344;
+
+    document.getElementById("remainingDistance").textContent =
+        `Next turn distance: ${miles.toFixed(2)} miles`;
 }
 
 function updateAutomaticVoice(position) {
