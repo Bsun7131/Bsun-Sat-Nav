@@ -534,6 +534,46 @@ function calculateSunAltitude(latitude, longitude, date = new Date()) {
         Math.cos(hourAngle)
     ) / radians;
 }
+// ========================================
+// BSUN SAT-NAV v0.9 — AUTOMATIC MAP MODE
+// ========================================
+
+function checkAutomaticMapMode(latitude, longitude) {
+
+    if (!Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)) {
+        return;
+    }
+
+    const now = Date.now();
+
+    if (now - lastDayNightCheck < DAY_NIGHT_CHECK_INTERVAL) {
+        return;
+    }
+
+    lastDayNightCheck = now;
+
+    const sunAltitude = calculateSunAltitude(
+        latitude,
+        longitude,
+        new Date(now)
+    );
+
+    // Approximately -0.833 degrees accounts for
+    // atmospheric refraction and the Sun's visible edge.
+    const desiredMode = sunAltitude > -0.833
+        ? "day"
+        : "night";
+
+    console.log(
+        "Bsun Sat-Nav sun altitude:",
+        sunAltitude.toFixed(2),
+        "Desired map mode:",
+        desiredMode
+    );
+
+    switchMapMode(desiredMode);
+}
 function initialiseMap() {
 
     if (typeof maplibregl === "undefined") {
