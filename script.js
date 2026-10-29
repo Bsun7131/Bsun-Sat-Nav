@@ -1256,7 +1256,29 @@ let routeReady = false;
 
 const voiceToggleBtn =
     document.getElementById("voiceToggleBtn");
+// Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — VOICE ON/OFF STATE
 
+let voiceEnabled = true;
+// Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — VOICE BUTTON CONTROL
+
+voiceToggleBtn.addEventListener("click", () => {
+
+    voiceEnabled = !voiceEnabled;
+
+    voiceToggleBtn.textContent =
+        voiceEnabled ? "🔊 Voice ON" : "🔇 Voice OFF";
+
+    if (!voiceEnabled && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+    }
+
+});
 
 
 // ========================================
@@ -2076,7 +2098,13 @@ if (!navigationActive || !routeReady || rerouteInProgress || offRouteReported) r
     const warningDistance =
         Math.max(120, Math.min(500, speed * 12));
 
-    if (
+    // Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — VOICE ON/OFF SAFEGUARD
+
+if (
+    voiceEnabled &&
     "speechSynthesis" in window &&
     typeof SpeechSynthesisUtterance !== "undefined" &&
     announcedVoiceStepIndex !== nextVoiceStepIndex &&
