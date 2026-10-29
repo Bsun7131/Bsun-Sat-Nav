@@ -767,6 +767,7 @@ function updateMapLocation(latitude, longitude, accuracy) {
     latestLatitude = latitude;
     latestLongitude = longitude;
     latestAccuracy = accuracy;
+    checkAutomaticMapMode(latitude, longitude);
 
     // MapLibre coordinates: [longitude, latitude]
     const location = [longitude, latitude];
