@@ -509,7 +509,7 @@ map = new maplibregl.Map({
     container: "map",
 
     // Free vector map tiles from OpenFreeMap
-    style: DAY_MAP_STYLE,
+    style: NIGHT_MAP_STYLE,
 
     center: [-3.0, 54.5],
 
