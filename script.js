@@ -454,6 +454,33 @@ let currentMapMode = "day";
 let firstLocationReceived = false;
 
 // ========================================
+// Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — MAP STYLE SWITCHING
+// ========================================
+
+function switchMapMode(mode) {
+
+    if (!map || (mode !== "day" && mode !== "night")) {
+        return;
+    }
+
+    if (currentMapMode === mode) {
+        return;
+    }
+
+    const styleUrl = mode === "night"
+        ? "https://tiles.openfreemap.org/styles/dark"
+        : "https://tiles.openfreemap.org/styles/liberty";
+
+    map.setStyle(styleUrl);
+
+    currentMapMode = mode;
+
+    console.log("Bsun Sat-Nav map mode:", mode);
+}
+// ========================================
 // INITIALISE INTERACTIVE MAP
 // ========================================
 
