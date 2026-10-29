@@ -2042,10 +2042,7 @@ if (!navigationActive || !routeReady || rerouteInProgress || offRouteReported) r
     const step = navigationSteps[nextVoiceStepIndex];
     if (!step) return;
 
-    if (
-        !("speechSynthesis" in window) ||
-        typeof SpeechSynthesisUtterance === "undefined"
-    ) return;
+    
 
     const coords = position.coords;
 
@@ -2080,9 +2077,11 @@ if (!navigationActive || !routeReady || rerouteInProgress || offRouteReported) r
         Math.max(120, Math.min(500, speed * 12));
 
     if (
-        announcedVoiceStepIndex !== nextVoiceStepIndex &&
-        distance <= warningDistance
-    ) {
+    "speechSynthesis" in window &&
+    typeof SpeechSynthesisUtterance !== "undefined" &&
+    announcedVoiceStepIndex !== nextVoiceStepIndex &&
+    distance <= warningDistance
+) {
         const message = new SpeechSynthesisUtterance(
             "Approaching. " + describeVoiceStep(step)
         );
@@ -2104,26 +2103,32 @@ if (!navigationActive || !routeReady || rerouteInProgress || offRouteReported) r
         );
     }
 
-    // Move to the following manoeuvre once very close,
-    // or after moving away from a recently approached turn.
-    const maneuverPassed =
-        distance <= 35 ||
-        (
-            previousVoiceDistance !== null &&
-            previousVoiceDistance < 90 &&
-            distance > previousVoiceDistance + 25
-        );
+    // Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — IMPROVED MANOEUVRE DETECTION
 
-    if (
-        announcedVoiceStepIndex === nextVoiceStepIndex &&
-        maneuverPassed
-    ) {
-        nextVoiceStepIndex++;
-        announcedVoiceStepIndex = -1;
-        previousVoiceDistance = null;
-    } else {
-        previousVoiceDistance = distance;
-    }
+// Advance only after approaching the manoeuvre
+// and then moving away from its location.
+const maneuverPassed =
+    previousVoiceDistance !== null &&
+    previousVoiceDistance < 90 &&
+    distance > previousVoiceDistance + 25;
+
+    // Copyright © 2026 Bisan Subba.
+// All rights reserved.
+// Developed by Bisan Subba.
+// BSUN SAT-NAV v0.9 — MANOEUVRE PROGRESS
+
+// Advance when the manoeuvre has been passed,
+// independently of whether voice guidance announced it.
+if (maneuverPassed) {
+    nextVoiceStepIndex++;
+    announcedVoiceStepIndex = -1;
+    previousVoiceDistance = null;
+} else {
+    previousVoiceDistance = distance;
+}
 }
 // ========================================
 // UPDATE SHOW ROUTE BUTTON
