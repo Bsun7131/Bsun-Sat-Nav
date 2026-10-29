@@ -450,6 +450,16 @@ let latestAccuracy = null;
 let latestHeading = null;
 
 let currentMapMode = "day";
+// ========================================
+// BSUN SAT-NAV v0.9 — DAY/NIGHT DETECTION
+// ========================================
+
+// Store the last time the day/night mode was checked.
+let lastDayNightCheck = 0;
+
+// Check the day/night mode at most once per minute.
+const DAY_NIGHT_CHECK_INTERVAL = 60000;
+
 
 let firstLocationReceived = false;
 
