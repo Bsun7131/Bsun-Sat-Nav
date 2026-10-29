@@ -449,7 +449,7 @@ let latestLongitude = null;
 let latestAccuracy = null;
 let latestHeading = null;
 
-let currentMapMode = "day";
+let currentMapMode = "night";
 // ========================================
 // BSUN SAT-NAV v0.9 — DAY/NIGHT DETECTION
 // ========================================
