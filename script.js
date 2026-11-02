@@ -493,9 +493,9 @@ function switchMapMode(mode) {
         ? "https://tiles.openfreemap.org/styles/dark"
         : "https://tiles.openfreemap.org/styles/liberty";
 
-    currentMapMode = mode;
+    map.setStyle(styleUrl);
 
-map.setStyle(styleUrl);
+currentMapMode = mode;
 
     console.log("Bsun Sat-Nav map mode:", mode);
 }
@@ -676,44 +676,11 @@ console.log("Road layers matched:", roadLayers.length);
 });
    // ========================================
 // BSUN SAT-NAV v0.9 — RESTORE ROUTE AFTER STYLE CHANGE
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
 // ========================================
 
 map.on("style.load", () => {
-
-    // Apply slightly brighter colours to night mode only.
-    if (currentMapMode === "night") {
-
-        const layers = map.getStyle().layers;
-
-        layers.forEach((layer) => {
-
-            const layerId = layer.id.toLowerCase();
-
-            // Brighten the map background slightly.
-            if (layer.type === "background") {
-                map.setPaintProperty(
-                    layer.id,
-                    "background-color",
-                    "#202d3b"
-                );
-            }
-
-            // Brighten road lines while preserving their widths.
-            if (
-                layer.type === "line" &&
-                (layerId.includes("road") ||
-                 layerId.includes("highway") ||
-                 layerId.includes("motorway"))
-            ) {
-                map.setPaintProperty(
-                    layer.id,
-                    "line-color",
-                    "#526579"
-                );
-            }
-
-        });
-    }
 
     restoreNavigationRoute();
 
