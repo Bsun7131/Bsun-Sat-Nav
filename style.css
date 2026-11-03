@@ -1088,8 +1088,8 @@ body.navigation-mode .navigation-controls {
     top: 10px;
     right: 10px;
 
-    width: auto;
-    max-width: 230px;
+        width: max-content;
+    max-width: calc(100vw - 16px);
 
     z-index: 120;
 
