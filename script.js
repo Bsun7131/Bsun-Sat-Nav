@@ -2157,7 +2157,10 @@ if (maneuverPassed) {
     announcedVoiceStepIndex = -1;
     previousVoiceDistance = null;
 } else {
-    previousVoiceDistance = distance;
+    previousVoiceDistance =
+        previousVoiceDistance === null
+            ? distance
+            : Math.min(previousVoiceDistance, distance);
 }
 }
 // ========================================
