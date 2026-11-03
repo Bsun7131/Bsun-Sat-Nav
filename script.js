@@ -2544,6 +2544,25 @@ requestWakeLock();
 // Activate dedicated navigation layout
 document.body.classList.add("navigation-mode");
 
+// ========================================
+// BSUN SAT-NAV — FULLSCREEN NAVIGATION
+// Copyright (c) 2026 Bisan Subba.
+// All rights reserved.
+// ========================================
+
+// Request fullscreen when GO is pressed.
+if (document.documentElement.requestFullscreen) {
+
+    document.documentElement.requestFullscreen()
+        .catch(error => {
+            console.warn(
+                "Fullscreen unavailable:",
+                error
+            );
+        });
+
+}
+
 goBtn.disabled = true;
 stopNavigationBtn.disabled = false;
 // ========================================
