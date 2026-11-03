@@ -992,14 +992,14 @@ body.navigation-mode .leaflet-top.leaflet-left {
     }
 
     body.navigation-mode .navigation-controls button {
-        width: auto;
-        flex: 1;
-        min-width: 0;
+    width: max-content;
+    flex: 0 0 auto;
+    min-width: max-content;
 
-        padding: 7px 5px;
-        font-size: 11px;
-    }
-
+    padding: 7px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+}
     /* Reduce instruction spacing */
     body.navigation-mode .navigation-display {
         padding: 2px;
