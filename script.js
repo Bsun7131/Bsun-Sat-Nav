@@ -1258,7 +1258,7 @@ if (navigationSteps.length > 0) {
 
 }
 
-}
+});
 /* Bsun Sat-Nav — Beta Safety Acknowledgement */
 
 const betaSafetyModal =
