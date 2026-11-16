@@ -1142,6 +1142,14 @@ updateRouteButton();
 
 // START NAVIGATION
 goBtn.addEventListener("click", () => {
+    if (!routeReady || navigationActive) {
+        return;
+    }
+
+    showBetaSafetyNotice();
+});
+
+function startNavigationAfterAcknowledgement() {
 
     if (!routeReady || navigationActive) {
         return;
