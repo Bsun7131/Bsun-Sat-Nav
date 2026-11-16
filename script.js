@@ -1299,7 +1299,17 @@ function closeBetaSafetyNotice() {
 betaSafetyCancel.addEventListener("click", () => {
     closeBetaSafetyNotice();
 });
+betaSafetyContinue.addEventListener("click", () => {
 
+    if (!betaSafetyAgree.checked) {
+        return;
+    }
+
+    closeBetaSafetyNotice();
+
+    startNavigationAfterAcknowledgement();
+
+});
 // ========================================
 // BSUN SAT-NAV — STOP NAVIGATION FIX
 // Copyright (c) 2026 Bisan Subba.
