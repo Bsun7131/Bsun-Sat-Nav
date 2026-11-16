@@ -1259,49 +1259,7 @@ if (navigationSteps.length > 0) {
 }
 
 });
-/* Bsun Sat-Nav — Beta Safety Acknowledgement */
 
-const betaSafetyModal =
-    document.getElementById("betaSafetyModal");
-
-const betaSafetyAgree =
-    document.getElementById("betaSafetyAgree");
-
-const betaSafetyContinue =
-    document.getElementById("betaSafetyContinue");
-
-const betaSafetyCancel =
-    document.getElementById("betaSafetyCancel");
-
-betaSafetyAgree.addEventListener("change", () => {
-    betaSafetyContinue.disabled = !betaSafetyAgree.checked;
-});
-
-function showBetaSafetyNotice() {
-    betaSafetyAgree.checked = false;
-    betaSafetyContinue.disabled = true;
-    betaSafetyModal.hidden = false;
-    betaSafetyAgree.focus();
-}
-
-function closeBetaSafetyNotice() {
-    betaSafetyModal.hidden = true;
-}
-
-betaSafetyCancel.addEventListener("click", () => {
-    closeBetaSafetyNotice();
-});
-betaSafetyContinue.addEventListener("click", () => {
-
-    if (!betaSafetyAgree.checked) {
-        return;
-    }
-
-    closeBetaSafetyNotice();
-
-    startNavigationAfterAcknowledgement();
-
-});
 // ========================================
 // BSUN SAT-NAV — STOP NAVIGATION FIX
 // Copyright (c) 2026 Bisan Subba.
