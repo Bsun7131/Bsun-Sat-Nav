@@ -7,6 +7,44 @@ Bsun Sat-Nav — GPS Tracking Engine
 "use strict";
 
 // ========================================
+// BSUN SAT-NAV v0.9
+// SAFETY ACKNOWLEDGEMENT
+// ========================================
+
+const safetyAcknowledgement =
+    document.getElementById("safetyAcknowledgement");
+
+const safetyAcceptCheckbox =
+    document.getElementById("safetyAcceptCheckbox");
+
+const safetyContinueBtn =
+    document.getElementById("safetyContinueBtn");
+
+let safetyAccepted = false;
+
+// Keep Continue disabled until checkbox is selected
+safetyAcceptCheckbox.addEventListener("change", () => {
+
+    safetyContinueBtn.disabled =
+        !safetyAcceptCheckbox.checked;
+
+});
+
+// Accept and close the acknowledgement screen
+safetyContinueBtn.addEventListener("click", () => {
+
+    if (!safetyAcceptCheckbox.checked) {
+        return;
+    }
+
+    safetyAccepted = true;
+
+    safetyAcknowledgement.hidden = true;
+    safetyAcknowledgement.style.display = "none";
+
+});
+
+// ========================================
 // ELEMENT REFERENCES 
 // ========================================
 
