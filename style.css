@@ -1396,3 +1396,23 @@ body.navigation-mode .maplibregl-top.maplibregl-right .maplibregl-ctrl {
     margin-bottom: 20px;
 }
 
+/* BSUN SAT-NAV v0.9 — FOOTER LEGAL LINKS */
+
+footer .information {
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.8;
+}
+
+footer .information a,
+footer .information a:visited {
+    color: #93c5fd !important;
+    text-decoration: none;
+}
+
+footer .information a:hover {
+    color: #ffffff !important;
+    text-decoration: underline;
+}
+
+
