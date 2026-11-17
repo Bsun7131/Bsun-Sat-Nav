@@ -1381,3 +1381,11 @@ body.navigation-mode .maplibregl-top.maplibregl-right .maplibregl-ctrl {
         padding: 12px;
     }
 }
+/* Bsun Sat-Nav v0.9 — Developer Credit */
+
+.safety-developer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+    margin: -4px 0 18px;
+}
